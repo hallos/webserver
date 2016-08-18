@@ -1,0 +1,7 @@
+bin/*
+obj/*
+
+# CodeBlocks files
+*.depend
+*.layout
+*.cpb
