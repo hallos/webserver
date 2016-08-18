@@ -4,14 +4,16 @@
 //--------------------------------------------
 // startServer
 //--------------------------------------------
-void webServer::startServer()
+bool webServer::startServer()
 {
     if(run){
         std::cout << "Server already running.." << std::endl;
+        return false;
     }
     else{
         run = true;
         runServer(80);
+        return true;
     }
 }
 //--------------------------------------------

@@ -17,7 +17,7 @@ public:
     bool isRunning() { return run; }
     bool runServer(int port);
     void handleConnection(SOCKET clientSocket);
-    void startServer();
+    bool startServer();
     void stopServer();
 };
 
