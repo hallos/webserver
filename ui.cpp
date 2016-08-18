@@ -14,7 +14,7 @@ void printMainMenu(bool running)
     //clearScreen();
     cout << "WEBSERVER   -  ";
     if(running){
-        cout << " LIVE: " << running << endl;
+        cout << " LIVE " << endl;
     }
     cout << endl << endl
             << "1. Start server" << endl
