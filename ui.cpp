@@ -1,6 +1,8 @@
 #include "ui.h"
 #include <iostream>
 #include <stdexcept>
+#include <string>
+#include <fstream>
 
 using std::cin;
 using std::cout;
@@ -19,6 +21,7 @@ void printMainMenu(bool running)
     cout << endl << endl
             << "1. Start server" << endl
             << "2. Stop server" << endl
+            << "3. Set directory" << endl
             << "0. EXIT" << endl;
 }
 //--------------------------------------------
@@ -66,4 +69,33 @@ int getMenuOption(int maxOptions)
         }
     }while(!inputOK);
     return tmpOption;
+}
+//--------------------------------------------
+// chooseDirectory
+//
+//--------------------------------------------
+void chooseDirectory(webServer &server)
+{
+    std::string directory;
+    std::ifstream read;
+
+    clearScreen();
+    //Take user input to set directory where index.html is located
+    std::cout <<  std::endl << "Set directory for index-file: C:/";
+    std::getline(std::cin, directory);
+    directory = "C:/" + directory;
+    //Try to open index.html in directory to control that its a valid directory
+    read.open(directory + "/index.html");
+    if(read){
+        std::cout << "Directory set: " << directory << "/" << endl;
+        read.close();
+        //Set the chosen directory in webServer-object
+        server.setDirectory(directory + "/");
+    }
+    else{
+        std::cout << "Couldn't find " << directory << "/index.html" << endl;
+    }
+
+    std::cout << "Press ENTER to return...";
+    std::cin.get();
 }

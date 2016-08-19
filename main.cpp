@@ -14,13 +14,16 @@ int main()
 
     do{
         printMainMenu(server.isRunning());
-        switch(getMenuOption(3))
+        switch(getMenuOption(4))
         {
         case 1:
             Threads.push_back(new thread(&webServer::startServer,&server));
             break;
         case 2:
             server.stopServer();
+            break;
+        case 3:
+            chooseDirectory(server);
             break;
         case 0:
             server.stopServer();
