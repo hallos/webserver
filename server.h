@@ -8,10 +8,13 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <string>
 
 class webServer {
 private:
     bool run;
+    std::string directory;
+    std::string indexFile;
 
 public:
     bool isRunning() { return run; }
@@ -19,6 +22,8 @@ public:
     void handleConnection(SOCKET clientSocket);
     bool startServer();
     void stopServer();
+    bool setDirectory(std::string dir);
+    bool bufferIndexFile();
 };
 
 #endif // SERVER_H_INCLUDED

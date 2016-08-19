@@ -1,19 +1,21 @@
 #include "server.h"
 
+#include <fstream>
+#include <sstream>
 
 //--------------------------------------------
 // startServer
 //--------------------------------------------
 bool webServer::startServer()
 {
-    if(run){
-        std::cout << "Server already running.." << std::endl;
-        return false;
-    }
-    else{
+    if(!run){
         run = true;
         runServer(80);
         return true;
+    }
+    else{
+        std::cout << "Server already running.." << std::endl;
+        return false;
     }
 }
 //--------------------------------------------
@@ -24,6 +26,42 @@ bool webServer::startServer()
 void webServer::stopServer()
 {
     run = false;
+}
+//--------------------------------------------
+// setDirectory
+//--------------------------------------------
+bool webServer::setDirectory(std::string dir)
+{
+    //Set directory string
+    directory = dir;
+    //Buffer index-file to string indexFile
+    return bufferIndexFile();
+}
+//--------------------------------------------
+// bufferIndexFile
+//--------------------------------------------
+bool webServer::bufferIndexFile()
+{
+    std::fstream file;
+    file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+
+    try{
+        //Open index-file and read the file to string indexFile
+        file.open(directory+"/index.html");
+        std::string tmp, readFromFile;
+
+        while(!file.eof()){
+            getline(file, tmp);
+            readFromFile += tmp + "\n";
+        }
+        indexFile = readFromFile;
+
+        return true;
+    }
+    catch(...){
+        std::cerr << "index.html missing..";
+        return false;
+    }
 }
 //--------------------------------------------
 // runServer
@@ -120,8 +158,26 @@ void webServer::handleConnection(SOCKET clientSocket)
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
     std::cout << recBuffer;
-    char sendBuffer[150] = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContect-Length: 140\n\n<html>\n<body>\nHello world!\n</body>\n</html>";
-    send(clientSocket, sendBuffer, 150, 0);
+
+    std::ostringstream iss;
+    int indexFileLength = indexFile.length();
+    iss << indexFileLength;
+    std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
+    char sendBuffer[1000];
+
+    for(int i=0; i<header.length(); i++){
+        sendBuffer[i] = header[i];
+    }
+    for(int i=header.length(); i<indexFileLength+header.length(); i++){
+        sendBuffer[i] = indexFile[i-header.length()];
+    }
+    sendBuffer[header.length()+indexFileLength+1] = '\0';
+    std::cout << "sendBuffer:" << std::endl;
+    for(int i=0; i<1000; i++){
+        std::cout << sendBuffer[i];
+    }
+
+    send(clientSocket, sendBuffer, 1000, 0);
     //Close client-socket
     if(clientSocket != INVALID_SOCKET)
         closesocket(clientSocket);
