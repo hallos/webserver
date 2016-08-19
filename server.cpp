@@ -163,21 +163,21 @@ void webServer::handleConnection(SOCKET clientSocket)
     int indexFileLength = indexFile.length();
     iss << indexFileLength;
     std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
-    char sendBuffer[1000];
+    std::string message = header + indexFile;
+    int bufferLength = message.length();
 
-    for(int i=0; i<header.length(); i++){
-        sendBuffer[i] = header[i];
-    }
-    for(int i=header.length(); i<indexFileLength+header.length(); i++){
-        sendBuffer[i] = indexFile[i-header.length()];
-    }
-    sendBuffer[header.length()+indexFileLength+1] = '\0';
+    char * sendBuffer = new char[bufferLength]();
+
     std::cout << "sendBuffer:" << std::endl;
-    for(int i=0; i<1000; i++){
+    //Copy message-string to char buffer
+    for(int i=0; i<bufferLength; i++){
+        sendBuffer[i] = message[i];
         std::cout << sendBuffer[i];
     }
 
-    send(clientSocket, sendBuffer, 1000, 0);
+    send(clientSocket, sendBuffer, bufferLength, 0);
+
+    delete sendBuffer;
     //Close client-socket
     if(clientSocket != INVALID_SOCKET)
         closesocket(clientSocket);
