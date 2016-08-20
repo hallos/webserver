@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <mutex>
 #include <string>
 
 class webServer {
@@ -15,6 +16,8 @@ private:
     bool run;
     std::string directory;
     std::string indexBuffer;
+
+    std::mutex bufferMutex;
 
 public:
     bool isRunning() { return run; }
@@ -25,7 +28,7 @@ public:
     bool setDirectory(std::string &dir);
     std::string getDirectory();
     bool setIndexBuffer(std::string &index);
-    std::string getIndexBuffer();
+    std::string getIndexBuffer(int &length);
     bool bufferIndexFile();
 };
 

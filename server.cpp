@@ -50,13 +50,18 @@ std::string webServer::getDirectory()
 bool webServer::setIndexBuffer(std::string &index)
 {
     indexBuffer = index;
+    return true;
 }
 //--------------------------------------------
 // getIndexBuffer
 //--------------------------------------------
-std::string webServer::getIndexBuffer()
+std::string webServer::getIndexBuffer(int &length)
 {
-    return indexBuffer;
+    bufferMutex.lock(); //Wait for access to indexBuffer
+    length = indexBuffer.length();
+    std::string retString = indexBuffer;
+    bufferMutex.unlock(); //Release indexBuffer
+    return retString;
 }
 //--------------------------------------------
 // bufferIndexFile
@@ -181,12 +186,13 @@ void webServer::handleConnection(SOCKET clientSocket)
     std::cout << recBuffer;
 
     std::ostringstream iss;
-    int contentLength = indexBuffer.length();
+    int contentLength;
+    std::string content = getIndexBuffer(contentLength);
     iss << contentLength;
     std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
-    std::string message = header + getIndexBuffer();
-    int bufferLength = message.length();
+    std::string message = header + content;
 
+    int bufferLength = message.length();
     char * sendBuffer = new char[bufferLength]();
 
     std::cout << "sendBuffer:" << std::endl;
