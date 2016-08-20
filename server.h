@@ -14,7 +14,7 @@ class webServer {
 private:
     bool run;
     std::string directory;
-    std::string indexFile;
+    std::string indexBuffer;
 
 public:
     bool isRunning() { return run; }
@@ -22,7 +22,10 @@ public:
     void handleConnection(SOCKET clientSocket);
     bool startServer();
     void stopServer();
-    bool setDirectory(std::string dir);
+    bool setDirectory(std::string &dir);
+    std::string getDirectory();
+    bool setIndexBuffer(std::string &index);
+    std::string getIndexBuffer();
     bool bufferIndexFile();
 };
 

@@ -30,12 +30,33 @@ void webServer::stopServer()
 //--------------------------------------------
 // setDirectory
 //--------------------------------------------
-bool webServer::setDirectory(std::string dir)
+bool webServer::setDirectory(std::string &dir)
 {
     //Set directory string
     directory = dir;
     //Buffer index-file to string indexFile
     return bufferIndexFile();
+}
+//--------------------------------------------
+// getDirectory
+//--------------------------------------------
+std::string webServer::getDirectory()
+{
+    return directory;
+}
+//--------------------------------------------
+// setIndexBuffer
+//--------------------------------------------
+bool webServer::setIndexBuffer(std::string &index)
+{
+    indexBuffer = index;
+}
+//--------------------------------------------
+// getIndexBuffer
+//--------------------------------------------
+std::string webServer::getIndexBuffer()
+{
+    return indexBuffer;
 }
 //--------------------------------------------
 // bufferIndexFile
@@ -47,14 +68,14 @@ bool webServer::bufferIndexFile()
 
     try{
         //Open index-file and read the file to string indexFile
-        file.open(directory+"/index.html");
+        file.open(this->getDirectory()+"/index.html");
         std::string tmp, readFromFile;
 
         while(!file.eof()){
             getline(file, tmp);
             readFromFile += tmp + "\n";
         }
-        indexFile = readFromFile;
+        this->setIndexBuffer(readFromFile);
 
         return true;
     }
@@ -160,10 +181,10 @@ void webServer::handleConnection(SOCKET clientSocket)
     std::cout << recBuffer;
 
     std::ostringstream iss;
-    int indexFileLength = indexFile.length();
-    iss << indexFileLength;
+    int contentLength = indexBuffer.length();
+    iss << contentLength;
     std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
-    std::string message = header + indexFile;
+    std::string message = header + getIndexBuffer();
     int bufferLength = message.length();
 
     char * sendBuffer = new char[bufferLength]();

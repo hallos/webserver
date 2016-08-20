@@ -83,14 +83,14 @@ void chooseDirectory(webServer &server)
     //Take user input to set directory where index.html is located
     std::cout <<  std::endl << "Set directory for index-file: C:/";
     std::getline(std::cin, directory);
-    directory = "C:/" + directory;
+    directory = "C:/" + directory + "/";
     //Try to open index.html in directory to control that its a valid directory
-    read.open(directory + "/index.html");
+    read.open(directory + "index.html");
     if(read){
-        std::cout << "Directory set: " << directory << "/" << endl;
+        std::cout << "Directory set: " << directory << endl;
         read.close();
         //Set the chosen directory in webServer-object
-        server.setDirectory(directory + "/");
+        server.setDirectory(directory );
     }
     else{
         std::cout << "Couldn't find " << directory << "/index.html" << endl;
