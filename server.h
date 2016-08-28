@@ -20,6 +20,7 @@ private:
     std::mutex bufferMutex;
 
 public:
+    webServer();
     bool isRunning() { return run; }
     bool runServer(int port);
     void handleConnection(SOCKET clientSocket);

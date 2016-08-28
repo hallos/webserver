@@ -3,6 +3,21 @@
 #include <fstream>
 #include <sstream>
 
+
+//--------------------------------------------
+//  Constructor
+//--------------------------------------------
+webServer::webServer()
+{
+    run = false; //Set run-flag as false by default
+}
+//--------------------------------------------
+// Deconstructor
+//--------------------------------------------
+webServer::~webServer()
+{
+    //deconstructor
+}
 //--------------------------------------------
 // startServer
 //--------------------------------------------
@@ -49,7 +64,9 @@ std::string webServer::getDirectory()
 //--------------------------------------------
 bool webServer::setIndexBuffer(std::string &index)
 {
+    bufferMutex.lock(); //Wait for access to indexBuffer
     indexBuffer = index;
+    bufferMutex.unlock(); //Release indexBuffer
     return true;
 }
 //--------------------------------------------
@@ -185,10 +202,12 @@ void webServer::handleConnection(SOCKET clientSocket)
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
     std::cout << recBuffer;
 
+    //Get buffered index-file and its length
     std::ostringstream iss;
     int contentLength;
     std::string content = getIndexBuffer(contentLength);
     iss << contentLength;
+
     std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
     std::string message = header + content;
 
