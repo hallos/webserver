@@ -118,7 +118,7 @@ bool webServer::bufferIndexFile()
 
     try{
         //Open index-file and read the file to string indexFile
-        file.open(this->getDirectory()+"/index.html");
+        file.open(this->getDirectory()+"index.html");
         std::string tmp, readFromFile;
 
         while(!file.eof()){

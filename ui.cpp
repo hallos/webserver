@@ -90,10 +90,10 @@ void chooseDirectory(webServer &server)
         std::cout << "Directory set: " << directory << endl;
         read.close();
         //Set the chosen directory in webServer-object
-        server.setDirectory(directory );
+        server.setDirectory(directory);
     }
     else{
-        std::cout << "Couldn't find " << directory << "/index.html" << endl;
+        std::cout << "Couldn't find " << directory << "index.html" << endl;
     }
 
     std::cout << "Press ENTER to return...";
