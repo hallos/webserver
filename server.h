@@ -16,12 +16,15 @@ private:
     bool run;
     std::string directory;
     std::string indexBuffer;
-
+    // Mutexes for datamembers
     std::mutex bufferMutex;
+    std::mutex runMutex;
 
 public:
     webServer();
-    bool isRunning() { return run; }
+    ~webServer();
+
+    bool isRunning();
     bool runServer(int port);
     void handleConnection(SOCKET clientSocket);
     bool startServer();

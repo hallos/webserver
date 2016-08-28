@@ -24,7 +24,9 @@ webServer::~webServer()
 bool webServer::startServer()
 {
     if(!run){
+        runMutex.lock();
         run = true;
+        runMutex.unlock();
         runServer(80);
         return true;
     }
@@ -40,7 +42,19 @@ bool webServer::startServer()
 //--------------------------------------------
 void webServer::stopServer()
 {
+    runMutex.lock();
     run = false;
+    runMutex.unlock();
+}
+//--------------------------------------------
+//  isRunning
+//--------------------------------------------
+bool webServer::isRunning()
+{
+    runMutex.lock();
+    bool tmp = run;
+    runMutex.unlock();
+    return tmp;
 }
 //--------------------------------------------
 // setDirectory
@@ -155,7 +169,7 @@ bool webServer::runServer(int port){
             FD_SET(serverSocket,&fdRead);
             TIMEVAL timeOutTime = {1,0};
 
-            while(run){
+            while(this->isRunning()){
                 //Copy fd_Set to temp variabel for use with select()
                 fdTemp = fdRead;
                 if( select(0,&fdTemp,NULL,NULL,&timeOutTime) > 0 ){
