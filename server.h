@@ -19,6 +19,7 @@ private:
     // Mutexes for datamembers
     std::mutex bufferMutex;
     std::mutex runMutex;
+    std::mutex dirMutex;
 
 public:
     webServer();

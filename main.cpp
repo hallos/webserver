@@ -8,6 +8,7 @@ using namespace std;
 
 int main()
 {
+    system("title webServer"); //Set title of command-prompt
     vector<thread*> Threads;
     webServer server;
     bool exit=false;

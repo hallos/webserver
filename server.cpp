@@ -61,17 +61,31 @@ bool webServer::isRunning()
 //--------------------------------------------
 bool webServer::setDirectory(std::string &dir)
 {
+    dirMutex.lock();
+    //Save old directory
+    std::string oldDir = directory;
     //Set directory string
     directory = dir;
-    //Buffer index-file to string indexFile
-    return bufferIndexFile();
+    dirMutex.unlock();
+    //Try to buffer index-file to string indexFile
+    if(bufferIndexFile()){
+        return true;
+    }
+    //Set directory as old-directory if buffering fails
+    dirMutex.lock();
+    directory = oldDir;
+    dirMutex.unlock();
+    return false;
 }
 //--------------------------------------------
 // getDirectory
 //--------------------------------------------
 std::string webServer::getDirectory()
 {
-    return directory;
+    dirMutex.lock();
+    std::string tmp = directory;
+    dirMutex.unlock();
+    return tmp;
 }
 //--------------------------------------------
 // setIndexBuffer
