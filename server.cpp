@@ -1,4 +1,5 @@
 #include "server.h"
+#include "include/http.h"
 
 #include <fstream>
 #include <sstream>
@@ -228,16 +229,15 @@ void webServer::handleConnection(SOCKET clientSocket)
 {
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
-    std::cout << recBuffer;
+    std::string message;
+    interpretRequest(this, recBuffer, message);
 
     //Get buffered index-file and its length
-    std::ostringstream iss;
-    int contentLength;
+    int  contentLength = 0;
     std::string content = getIndexBuffer(contentLength);
-    iss << contentLength;
 
-    std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + iss.str() + "\n\n";
-    std::string message = header + content;
+    std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + std::to_string(contentLength) + "\n\n";
+    message = header + content;
 
     int bufferLength = message.length();
     char * sendBuffer = new char[bufferLength]();
