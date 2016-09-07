@@ -4,4 +4,4 @@ obj/*
 # CodeBlocks files
 *.depend
 *.layout
-*.cpb
+*.cbp
