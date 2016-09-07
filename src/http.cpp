@@ -3,18 +3,36 @@
 #include <iostream>
 #include <time.h>
 
-bool interpretRequest(webServer *server, char *recMessage, std::string &sendMessage)
+using namespace std;
+
+bool interpretRequest(webServer *server, string recMessage, string &sendMessage)
 {
-    std::cout << "Incoming request: " << std::endl << recMessage << std::endl;
-    std::string firstLine;
-    //Get first line
-    for(int i=0; recMessage[i]!='\n' || recMessage[i]!='\0'; i++) firstLine += recMessage[i];
+    cout << "Incoming request: " << endl << recMessage << endl;
+    string firstLine;
+    //Get first line of received message
+    firstLine = recMessage.substr(0,recMessage.find_first_of('\n'));
     //Control that it is a HTTP-request
-    if( firstLine.find("HTTP",0) != std::string::npos ){
-        std::cout << "HTTP-request found!" << std::endl;
+    if( firstLine.find("HTTP",0) != string::npos ){
+        cout << "HTTP-request found!" << endl;
 
-
+        string::size_type position;
+        if( position = firstLine.find("HEAD",0) != string::npos )
+        {
+            cout << "HEAD received!" << endl;
+        }
+        else if( position = firstLine.find("GET",0) != string::npos )
+        {
+            //Get positions for filename
+            string::size_type fileNameBegin = position + 3;
+            string::size_type fileNameEnd = firstLine.find(" ", fileNameBegin) - fileNameBegin;
+            //Extract filename
+            string requestedFile = firstLine.substr(fileNameBegin, fileNameEnd);
+            cout << "GET received! Requesting: " << requestedFile << endl;
+        }
+        return true;
     }
+
+    return false;
 
     /*
     if("http" is in firstline-string){
@@ -34,12 +52,12 @@ bool interpretRequest(webServer *server, char *recMessage, std::string &sendMess
     */
 }
 
-std::string httpGET(std::string file)
+string httpGET(string file)
 {
 
 }
 
-std::string getTimeStamp()
+string getTimeStamp()
 {
     return "ret";
 }
