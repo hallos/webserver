@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 
+using namespace std;
 
 //--------------------------------------------
 //  Constructor
@@ -32,7 +33,7 @@ bool webServer::startServer()
         return true;
     }
     else{
-        std::cout << "Server already running.." << std::endl;
+        cout << "Server already running.." << endl;
         return false;
     }
 }
@@ -60,11 +61,11 @@ bool webServer::isRunning()
 //--------------------------------------------
 // setDirectory
 //--------------------------------------------
-bool webServer::setDirectory(std::string &dir)
+bool webServer::setDirectory(string &dir)
 {
     dirMutex.lock();
     //Save old directory
-    std::string oldDir = directory;
+    string oldDir = directory;
     //Set directory string
     directory = dir;
     dirMutex.unlock();
@@ -81,17 +82,17 @@ bool webServer::setDirectory(std::string &dir)
 //--------------------------------------------
 // getDirectory
 //--------------------------------------------
-std::string webServer::getDirectory()
+string webServer::getDirectory()
 {
     dirMutex.lock();
-    std::string tmp = directory;
+    string tmp = directory;
     dirMutex.unlock();
     return tmp;
 }
 //--------------------------------------------
 // setIndexBuffer
 //--------------------------------------------
-bool webServer::setIndexBuffer(std::string &index)
+bool webServer::setIndexBuffer(string &index)
 {
     bufferMutex.lock(); //Wait for access to indexBuffer
     indexBuffer = index;
@@ -101,11 +102,11 @@ bool webServer::setIndexBuffer(std::string &index)
 //--------------------------------------------
 // getIndexBuffer
 //--------------------------------------------
-std::string webServer::getIndexBuffer(int &length)
+string webServer::getIndexBuffer(int &length)
 {
     bufferMutex.lock(); //Wait for access to indexBuffer
     length = indexBuffer.length();
-    std::string retString = indexBuffer;
+    string retString = indexBuffer;
     bufferMutex.unlock(); //Release indexBuffer
     return retString;
 }
@@ -114,13 +115,13 @@ std::string webServer::getIndexBuffer(int &length)
 //--------------------------------------------
 bool webServer::bufferIndexFile()
 {
-    std::fstream file;
-    file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+    fstream file;
+    file.exceptions( ifstream::failbit | ifstream::badbit );
 
     try{
         //Open index-file and read the file to string indexFile
         file.open(this->getDirectory()+"index.html");
-        std::string tmp, readFromFile;
+        string tmp, readFromFile;
 
         while(!file.eof()){
             getline(file, tmp);
@@ -131,7 +132,7 @@ bool webServer::bufferIndexFile()
         return true;
     }
     catch(...){
-        std::cerr << "index.html missing..";
+        cerr << "index.html missing..";
         return false;
     }
 }
@@ -154,7 +155,7 @@ bool webServer::runServer(int port){
             sockaddr_in sockAdr = {0};
 
             if((serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET){
-                std::cerr << "INVALID Socket.";
+                cerr << "INVALID Socket.";
                 return false;
             }
 
@@ -165,20 +166,20 @@ bool webServer::runServer(int port){
 
             //Bind socket
             if(bind(serverSocket,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr))!=0){
-                std::cerr << "Couldn't bind socket.";
+                cerr << "Couldn't bind socket.";
                 return false;
             }
 
             //Set socket in listening mode
             if(listen(serverSocket, SOMAXCONN)!=0){
-                std::cerr << "Couldn't set socket in listening-mode..";
+                cerr << "Couldn't set socket in listening-mode..";
                 return false;
             }
 
             sockaddr_in clientSockAdr;
             int clientSockSize = sizeof(clientSockAdr);
 
-            std::vector<std::thread*> connectionThreads;
+            vector<thread*> connectionThreads;
             fd_set fdRead, fdTemp;
             FD_ZERO(&fdRead);
             FD_SET(serverSocket,&fdRead);
@@ -192,11 +193,11 @@ bool webServer::runServer(int port){
                         //Accept connection
                         SOCKET clientSocket = accept(serverSocket, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
                         if(clientSocket==INVALID_SOCKET){
-                            std::cerr << "Accept connection failed.";
+                            cerr << "Accept connection failed.";
                             return false;
                         }
                         //Open a new thread that handles the connection
-                        connectionThreads.push_back(new std::thread(&webServer::handleConnection,this,clientSocket));
+                        connectionThreads.push_back(new thread(&webServer::handleConnection,this,clientSocket));
                     }
                 }
             }
@@ -215,7 +216,7 @@ bool webServer::runServer(int port){
         //Clean up WinSock
         if(WSACleanup() != 0)
         {
-            std::cerr << "Cleanup failed!\n";
+            cerr << "Cleanup failed!\n";
         }
     }
     return true;
@@ -229,24 +230,24 @@ void webServer::handleConnection(SOCKET clientSocket)
 {
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
-    std::string message;
+    string message;
     interpretRequest(this, recBuffer, message);
 
     //Get buffered index-file and its length
     int  contentLength = 0;
-    std::string content = getIndexBuffer(contentLength);
+    string content = getIndexBuffer(contentLength);
 
-    std::string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + std::to_string(contentLength) + "\n\n";
+    string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + to_string(contentLength) + "\n\n";
     message = header + content;
 
     int bufferLength = message.length();
     char * sendBuffer = new char[bufferLength]();
 
-    std::cout << "sendBuffer:" << std::endl;
+    cout << "sendBuffer:" << endl;
     //Copy message-string to char buffer
     for(int i=0; i<bufferLength; i++){
         sendBuffer[i] = message[i];
-        std::cout << sendBuffer[i];
+        cout << sendBuffer[i];
     }
 
     send(clientSocket, sendBuffer, bufferLength, 0);

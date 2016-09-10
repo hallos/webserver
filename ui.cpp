@@ -4,9 +4,7 @@
 #include <string>
 #include <fstream>
 
-using std::cin;
-using std::cout;
-using std::endl;
+using namespace std;
 //--------------------------------------------
 // printMainMenu
 //--------------------------------------------
@@ -45,7 +43,7 @@ int getMenuOption(int maxOptions)
     int tmpOption=0;
     bool inputOK=false;
     cout << "Enter menuoption: ";
-    cin.exceptions(std::istream::failbit | std::istream::badbit);
+    cin.exceptions(istream::failbit | istream::badbit);
     do{
         try{
             cin >> tmpOption;
@@ -56,11 +54,11 @@ int getMenuOption(int maxOptions)
             }
             else{
                 inputOK=false;
-                throw std::range_error("Option out of range");
+                throw range_error("Option out of range");
             }
         }
-        catch(std::exception){
-            std::cerr << "Bad input try again: ";
+        catch(exception){
+            cerr << "Bad input try again: ";
             if(!cin){
                 cin.clear();
                 cin.ignore(999,'\n');
@@ -76,26 +74,26 @@ int getMenuOption(int maxOptions)
 //--------------------------------------------
 void chooseDirectory(webServer &server)
 {
-    std::string directory;
-    std::ifstream read;
+    string directory;
+    ifstream read;
 
     clearScreen();
     //Take user input to set directory where index.html is located
-    std::cout <<  std::endl << "Set directory for index-file: C:/";
-    std::getline(std::cin, directory);
+    cout <<  endl << "Set directory for index-file: C:/";
+    getline(cin, directory);
     directory = "C:/" + directory + "/";
     //Try to open index.html in directory to control that its a valid directory
     read.open(directory + "index.html");
     if(read){
-        std::cout << "Directory set: " << directory << endl;
+        cout << "Directory set: " << directory << endl;
         read.close();
         //Set the chosen directory in webServer-object
         server.setDirectory(directory);
     }
     else{
-        std::cout << "Couldn't find " << directory << "index.html" << endl;
+        cout << "Couldn't find " << directory << "index.html" << endl;
     }
 
-    std::cout << "Press ENTER to return...";
-    std::cin.get();
+    cout << "Press ENTER to return...";
+    cin.get();
 }

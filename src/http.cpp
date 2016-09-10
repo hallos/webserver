@@ -16,11 +16,11 @@ bool interpretRequest(webServer *server, string recMessage, string &sendMessage)
         cout << "HTTP-request found!" << endl;
 
         string::size_type position;
-        if( position = firstLine.find("HEAD",0) != string::npos )
+        if( (position = firstLine.find("HEAD",0)) != string::npos )
         {
             cout << "HEAD received!" << endl;
         }
-        else if( position = firstLine.find("GET",0) != string::npos )
+        else if( (position = firstLine.find("GET",0)) != string::npos )
         {
             //Get positions for filename
             string::size_type fileNameBegin = position + 3;

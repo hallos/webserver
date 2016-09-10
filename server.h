@@ -11,15 +11,17 @@
 #include <mutex>
 #include <string>
 
+using namespace std;
+
 class webServer {
 private:
     bool run;
-    std::string directory;
-    std::string indexBuffer;
+    string directory;
+    string indexBuffer;
     // Mutexes for datamembers
-    std::mutex bufferMutex;
-    std::mutex runMutex;
-    std::mutex dirMutex;
+    mutex bufferMutex;
+    mutex runMutex;
+    mutex dirMutex;
 
 public:
     webServer();
@@ -30,10 +32,10 @@ public:
     void handleConnection(SOCKET clientSocket);
     bool startServer();
     void stopServer();
-    bool setDirectory(std::string &dir);
-    std::string getDirectory();
-    bool setIndexBuffer(std::string &index);
-    std::string getIndexBuffer(int &length);
+    bool setDirectory(string &dir);
+    string getDirectory();
+    bool setIndexBuffer(string &index);
+    string getIndexBuffer(int &length);
     bool bufferIndexFile();
 };
 
