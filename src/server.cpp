@@ -1,5 +1,5 @@
-#include "server.h"
-#include "include/http.h"
+#include "..\include\server.h"
+#include "..\include\http.h"
 
 #include <fstream>
 #include <sstream>
