@@ -1,8 +1,8 @@
 #include <thread>
 #include <vector>
 
-#include "server.h"
-#include "ui.h"
+#include "include/server.h"
+#include "include/ui.h"
 
 using namespace std;
 
