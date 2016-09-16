@@ -5,4 +5,4 @@ doxygen/*
 # CodeBlocks files
 *.depend
 *.layout
-*.cpb
+*.cbp
