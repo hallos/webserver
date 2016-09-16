@@ -5,12 +5,16 @@
 #include <fstream>
 
 using namespace std;
-//--------------------------------------------
-// printMainMenu
-//--------------------------------------------
+
+
+/** \brief Prints main menu in console window
+ *
+ * \param running
+ * \return void
+ *
+ */
 void printMainMenu(bool running)
 {
-
     //clearScreen();
     cout << "WEBSERVER   -  ";
     if(running){
@@ -22,22 +26,21 @@ void printMainMenu(bool running)
             << "3. Set directory" << endl
             << "0. EXIT" << endl;
 }
-//--------------------------------------------
-// clearScreen
-// clears windows console-window
-//--------------------------------------------
+/** \brief Clears windows console window
+ *
+ * \return void
+ *
+ */
 void clearScreen()
 {
     system("cls");
 }
-//--------------------------------------------
-//  getMenuOption
-//  Asks user for a integer as a menuoption
-//  Makes sure input is valid and within range
-//  of available options.
-//  Returns the options as an integer and takes
-//  number of valid options from 0 and up as argument
-//--------------------------------------------
+/** \brief Lets user choose a menu option by inputing an integer value
+ *
+ * \param maxOptions maximum valid value of option
+ * \return int with the chosen option
+ *
+ */
 int getMenuOption(int maxOptions)
 {
     int tmpOption=0;
@@ -68,10 +71,12 @@ int getMenuOption(int maxOptions)
     }while(!inputOK);
     return tmpOption;
 }
-//--------------------------------------------
-// chooseDirectory
-//
-//--------------------------------------------
+/** \brief Lets user choose directory where the index-file is located
+ *
+ * \param &server a reference to the webServer object
+ * \return void
+ *
+ */
 void chooseDirectory(webServer &server)
 {
     string directory;

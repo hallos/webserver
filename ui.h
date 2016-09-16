@@ -3,6 +3,12 @@
 
 #include "server.h"
 
+/** \brief A user interface module with functions for operating\
+ *  webServer objects
+ *
+ */
+
+
 void printMainMenu(bool running);
 int getMenuOption(int maxOptions);
 void clearScreen();
