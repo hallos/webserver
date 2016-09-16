@@ -1,6 +1,7 @@
 bin/*
 obj/*
 doxygen/*
+UML/*
 
 # CodeBlocks files
 *.depend
