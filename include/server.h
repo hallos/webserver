@@ -11,11 +11,14 @@
 #include <mutex>
 #include <string>
 
+#include "http.h"
+
 using namespace std;
 
 class webServer {
 private:
     bool run;
+    httpParser httpParser;
     string directory;
     string indexBuffer;
     // Mutexes for datamembers

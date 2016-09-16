@@ -231,7 +231,7 @@ void webServer::handleConnection(SOCKET clientSocket)
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
     string message;
-    interpretRequest(this, recBuffer, message);
+    httpParser.interpretRequest(recBuffer, message);
 
     //Get buffered index-file and its length
     int  contentLength = 0;

@@ -1,11 +1,11 @@
-#include "http.h"
-#include "../server.h"
+#include "../include/http.h"
 #include <iostream>
 #include <time.h>
 
 using namespace std;
 
-bool interpretRequest(webServer *server, string recMessage, string &sendMessage)
+
+bool httpParser::interpretRequest(string recMessage, string &sendMessage)
 {
     cout << "Incoming request: " << endl << recMessage << endl;
     string firstLine;
@@ -52,12 +52,12 @@ bool interpretRequest(webServer *server, string recMessage, string &sendMessage)
     */
 }
 
-string httpGET(string file)
+string httpParser::httpGET(string file)
 {
 
 }
 
-string getTimeStamp()
+string httpParser::getTimeStamp()
 {
     return "ret";
 }
