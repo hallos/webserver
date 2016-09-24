@@ -8,19 +8,19 @@ using namespace std;
 class httpInterpreter
 {
     private:
-        string incomingMSG;
-        string outgoingMSG;
+        string receivedMSG;
+        string sendMSG;
         string requestType;
         string fileContent;
 
         string getTimeStamp();
 
     public:
-        httpInterpreter() {} //Default constructor
+        httpInterpreter(string &recMsg): receivedMSG(recMsg) {} //Default constructor
         ~httpInterpreter() {} //Default deconstructor
 
         bool isHTTP();
-        bool interpretRequest(string recMessage, string &sendMessage);
+        bool interpretRequest(string &filename);
 
 
 };
