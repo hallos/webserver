@@ -18,7 +18,7 @@ using namespace std;
 class webServer {
 private:
     bool run;
-    httpParser httpParser;
+    httpInterpreter interpreter;
     string directory;
     string indexBuffer;
     // Mutexes for datamembers

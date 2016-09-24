@@ -5,18 +5,23 @@
 
 using namespace std;
 
-class httpParser
+class httpInterpreter
 {
     private:
-        string input;
+        string incomingMSG;
+        string outgoingMSG;
+        string requestType;
+        string fileContent;
+
         string getTimeStamp();
 
     public:
-        httpParser() {} //Default constructor
-        ~httpParser() {} //Default deconstructor
+        httpInterpreter() {} //Default constructor
+        ~httpInterpreter() {} //Default deconstructor
 
+        bool isHTTP();
         bool interpretRequest(string recMessage, string &sendMessage);
-        string httpGET(string file);
+
 
 };
 

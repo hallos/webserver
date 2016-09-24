@@ -5,7 +5,7 @@
 using namespace std;
 
 
-bool httpParser::interpretRequest(string recMessage, string &sendMessage)
+bool httpInterpreter::interpretRequest(string recMessage, string &sendMessage)
 {
     cout << "Incoming request: " << endl << recMessage << endl;
     string firstLine;
@@ -52,12 +52,8 @@ bool httpParser::interpretRequest(string recMessage, string &sendMessage)
     */
 }
 
-string httpParser::httpGET(string file)
-{
 
-}
-
-string httpParser::getTimeStamp()
+string httpInterpreter::getTimeStamp()
 {
     return "ret";
 }
