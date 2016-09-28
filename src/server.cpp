@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 using namespace std;
 
@@ -57,84 +58,6 @@ bool webServer::isRunning()
     bool tmp = run;
     runMutex.unlock();
     return tmp;
-}
-//--------------------------------------------
-// setDirectory
-//--------------------------------------------
-bool webServer::setDirectory(string &dir)
-{
-    dirMutex.lock();
-    //Save old directory
-    string oldDir = directory;
-    //Set directory string
-    directory = dir;
-    dirMutex.unlock();
-    //Try to buffer index-file to string indexFile
-    if(bufferIndexFile()){
-        return true;
-    }
-    //Set directory as old-directory if buffering fails
-    dirMutex.lock();
-    directory = oldDir;
-    dirMutex.unlock();
-    return false;
-}
-//--------------------------------------------
-// getDirectory
-//--------------------------------------------
-string webServer::getDirectory()
-{
-    dirMutex.lock();
-    string tmp = directory;
-    dirMutex.unlock();
-    return tmp;
-}
-//--------------------------------------------
-// setIndexBuffer
-//--------------------------------------------
-bool webServer::setIndexBuffer(string &index)
-{
-    bufferMutex.lock(); //Wait for access to indexBuffer
-    indexBuffer = index;
-    bufferMutex.unlock(); //Release indexBuffer
-    return true;
-}
-//--------------------------------------------
-// getIndexBuffer
-//--------------------------------------------
-string webServer::getIndexBuffer(int &length)
-{
-    bufferMutex.lock(); //Wait for access to indexBuffer
-    length = indexBuffer.length();
-    string retString = indexBuffer;
-    bufferMutex.unlock(); //Release indexBuffer
-    return retString;
-}
-//--------------------------------------------
-// bufferIndexFile
-//--------------------------------------------
-bool webServer::bufferIndexFile()
-{
-    fstream file;
-    file.exceptions( ifstream::failbit | ifstream::badbit );
-
-    try{
-        //Open index-file and read the file to string indexFile
-        file.open(this->getDirectory()+"index.html");
-        string tmp, readFromFile;
-
-        while(!file.eof()){
-            getline(file, tmp);
-            readFromFile += tmp + "\n";
-        }
-        this->setIndexBuffer(readFromFile);
-
-        return true;
-    }
-    catch(...){
-        cerr << "index.html missing..";
-        return false;
-    }
 }
 //--------------------------------------------
 // runServer
@@ -230,29 +153,40 @@ void webServer::handleConnection(SOCKET clientSocket)
 {
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
-    string message;
-    interpreter.interpretRequest(recBuffer, message);
+    cout << "Incoming req:" << endl << recBuffer << endl;
+    string receivedRequest = recBuffer;
+    unique_ptr<httpInterpreter> interpreter (new httpInterpreter(receivedRequest));
+    string requestedFile;
+    if(interpreter->interpretRequest(requestedFile))
+    {
 
-    //Get buffered index-file and its length
-    int  contentLength = 0;
-    string content = getIndexBuffer(contentLength);
+        if(requestedFile == "index.html" ){
+            //Get buffered index-file and its length
+            int contentLength=0;
+            string content = getIndexBuffer(contentLength);
+            string contType ="text/html";
 
-    string header = "HTTP/1.0 200 OK\nDate: Fri, 17 Jun 2015 23:59:59 GMT\nContent-Type: text/html\nContent-Length: " + to_string(contentLength) + "\n\n";
-    message = header + content;
 
-    int bufferLength = message.length();
-    char * sendBuffer = new char[bufferLength]();
+            interpreter->constructResponse(content, contType);
 
-    cout << "sendBuffer:" << endl;
-    //Copy message-string to char buffer
-    for(int i=0; i<bufferLength; i++){
-        sendBuffer[i] = message[i];
-        cout << sendBuffer[i];
+            string message = interpreter->getResponse();
+
+            int bufferLength = message.length();
+            char * sendBuffer = new char[bufferLength]();
+
+            cout << "sendBuffer:" << endl;
+            //Copy message-string to char buffer
+            for(int i=0; i<bufferLength; i++){
+                sendBuffer[i] = message[i];
+                cout << sendBuffer[i];
+            }
+
+            send(clientSocket, sendBuffer, bufferLength, 0);
+            delete sendBuffer;
+        }
+
     }
 
-    send(clientSocket, sendBuffer, bufferLength, 0);
-
-    delete sendBuffer;
     //Close client-socket
     if(clientSocket != INVALID_SOCKET)
         closesocket(clientSocket);

@@ -5,12 +5,9 @@
 
 #include <winsock2.h>
 #include <windows.h>
-#include <iostream>
-#include <vector>
 #include <thread>
 #include <mutex>
 #include <string>
-
 #include "http.h"
 
 using namespace std;
@@ -18,13 +15,8 @@ using namespace std;
 class webServer {
 private:
     bool run;
-    httpInterpreter interpreter;
-    string directory;
-    string indexBuffer;
     // Mutexes for datamembers
-    mutex bufferMutex;
     mutex runMutex;
-    mutex dirMutex;
 
 public:
     webServer();
@@ -35,11 +27,7 @@ public:
     void handleConnection(SOCKET clientSocket);
     bool startServer();
     void stopServer();
-    bool setDirectory(string &dir);
-    string getDirectory();
-    bool setIndexBuffer(string &index);
-    string getIndexBuffer(int &length);
-    bool bufferIndexFile();
+
 };
 
 #endif // SERVER_H_INCLUDED
