@@ -74,12 +74,12 @@ bool httpInterpreter::interpretRequest(string &filename)
  * \return void
  *
  */
-void httpInterpreter::constructHead()
+void httpInterpreter::constructHead(const string &contentType)
 {
     sendMSG = "HTTP/1.0 200 OK\n";
     sendMSG.append("Date: " + getTimeStamp() + "\n");
     sendMSG.append("Server: webServer/1.0\n");
-    sendMSG.append("Content-type: text/html\n");
+    sendMSG.append("Content-type: " + contentType + "\n");
     sendMSG.append("Content-length: " + to_string(fileContent.length()) );
     sendMSG.append("\n\n");
 }
@@ -92,10 +92,10 @@ void httpInterpreter::constructHead()
  * \return bool
  *
  */
-bool httpInterpreter::constructResponse(const string &file)
+bool httpInterpreter::constructResponse(const string &file, const string &contentType)
 {
     fileContent = file;
-    constructHead();
+    constructHead(contentType);
     if(requestType == "HEAD") return true; //Return if only the head was requested
 
     sendMSG.append(fileContent);

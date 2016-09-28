@@ -14,7 +14,7 @@ class httpInterpreter
         string fileContent;
 
         string getTimeStamp();
-        void constructHead();
+        void constructHead(const string &contentType);
 
     public:
         httpInterpreter(string &recMsg): receivedMSG(recMsg) {} //Default constructor
@@ -22,7 +22,7 @@ class httpInterpreter
 
         bool isHTTP();
         bool interpretRequest(string &filename);
-        bool constructResponse(const string &file);
+        bool constructResponse(const string &file, const string &contentType);
         string getResponse();
 
 
