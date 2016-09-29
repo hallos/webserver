@@ -5,11 +5,11 @@
 
 using namespace std;
 
-class file
+class fileObject
 {
     public:
-        file(const string &filename, const string &content, const string &contentType);
-        ~file();
+        fileObject(const string &filename, const string &content, const string &contentType);
+        ~fileObject();
 
         string getFilename() { return filename; }
         void setFilename(string name) { filename = name; }
