@@ -1,9 +1,10 @@
 #include "..\include\server.h"
 #include "..\include\http.h"
 
-#include <fstream>
 #include <sstream>
 #include <memory>
+#include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -159,35 +160,33 @@ void webServer::handleConnection(SOCKET clientSocket)
     string requestedFile;
     if(interpreter->interpretRequest(requestedFile))
     {
-
-        if(requestedFile == "index.html" ){
-            //Get buffered index-file and its length
-            int contentLength=0;
-            string content = getIndexBuffer(contentLength);
-            string contType ="text/html";
-
-
+        string content, contType;
+        if(reader.getFile(requestedFile, content, contType))
+        {
             interpreter->constructResponse(content, contType);
+        }
+        string message = interpreter->getResponse();
 
-            string message = interpreter->getResponse();
+        int bufferLength = message.length();
+        char * sendBuffer = new char[bufferLength]();
 
-            int bufferLength = message.length();
-            char * sendBuffer = new char[bufferLength]();
-
-            cout << "sendBuffer:" << endl;
-            //Copy message-string to char buffer
-            for(int i=0; i<bufferLength; i++){
-                sendBuffer[i] = message[i];
-                cout << sendBuffer[i];
-            }
-
-            send(clientSocket, sendBuffer, bufferLength, 0);
-            delete sendBuffer;
+        cout << "sendBuffer:" << endl;
+        //Copy message-string to char buffer
+        for(int i=0; i<bufferLength; i++){
+            sendBuffer[i] = message[i];
+            cout << sendBuffer[i];
         }
 
+        send(clientSocket, sendBuffer, bufferLength, 0);
+        delete sendBuffer;
     }
 
     //Close client-socket
     if(clientSocket != INVALID_SOCKET)
         closesocket(clientSocket);
+}
+
+bool webServer::setDirectory(string &dir)
+{
+    return reader.setDirectory(dir);
 }

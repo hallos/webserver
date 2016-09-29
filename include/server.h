@@ -9,14 +9,16 @@
 #include <mutex>
 #include <string>
 #include "http.h"
+#include "fileReader.h"
 
 using namespace std;
 
 class webServer {
 private:
     bool run;
-    // Mutexes for datamembers
     mutex runMutex;
+
+    fileReader reader;
 
 public:
     webServer();
@@ -27,6 +29,8 @@ public:
     void handleConnection(SOCKET clientSocket);
     bool startServer();
     void stopServer();
+
+    bool setDirectory(string &dir);
 
 };
 
