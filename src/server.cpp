@@ -166,19 +166,8 @@ void webServer::handleConnection(SOCKET clientSocket)
             interpreter->constructResponse(content, contType);
         }
         string message = interpreter->getResponse();
-
-        int bufferLength = message.length();
-        char * sendBuffer = new char[bufferLength]();
-
-        cout << "sendBuffer:" << endl;
-        //Copy message-string to char buffer
-        for(int i=0; i<bufferLength; i++){
-            sendBuffer[i] = message[i];
-            cout << sendBuffer[i];
-        }
-
-        send(clientSocket, sendBuffer, bufferLength, 0);
-        delete sendBuffer;
+        // Send message
+        send(clientSocket, message.c_str(), message.length()+1, 0);
     }
 
     //Close client-socket
