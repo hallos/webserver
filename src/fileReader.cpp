@@ -60,12 +60,14 @@ bool fileReader::bufferFile(string filename)
 /** \brief Sets the working directory of the fileReader
  *  and buffers the index.html file to the fileCache
  *
- * \param dir const string&
+ * \param dir
  * \return bool - True if directory is successfully set and a index.html file is buffered, false o/w
  *
  */
-bool fileReader::setDirectory(const string &dir)
+bool fileReader::setDirectory(string dir)
 {
+    if( dir.back() != '/' || dir.back() != '\\')
+        dir.push_back('/');
     dirMutex.lock();
     //Save old directory
     string oldDir = directory;

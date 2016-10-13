@@ -16,7 +16,7 @@ class fileReader
         ~fileReader() {}
 
         bool getFile(const string &filename, string &retFileContent, string &retContentType);
-        bool setDirectory(const string &dir);
+        bool setDirectory(string dir);
         string getDirectory();
 
 
@@ -31,7 +31,6 @@ class fileReader
 
         bool bufferFile(string filename);
         bool addFileToCache(unique_ptr<fileObject> newFile);
-
 
 };
 
