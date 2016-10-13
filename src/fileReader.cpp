@@ -17,32 +17,15 @@ bool fileReader::bufferFile(string filename)
     try{
         string content;
         //Open file and read the file to string
-        if( filename.find(".jpg") != string::npos )
+        file.open(this->getDirectory() + filename, ios_base::in|ios_base::binary);
+        file.seekg(0, file.beg);
+        char tmpChar = 0;
+        while( file.peek() != EOF )
         {
-            char tmpChar=0;
-            string tmpStr;
-            file.open(this->getDirectory() + filename, ios_base::in|ios_base::binary);
-            file.seekg(0);
-            while( file.read((char*) &tmpChar, sizeof(tmpChar)) )
-            {
-                tmpStr = tmpChar;
-                content.append(tmpStr);
-            }
-            file.close();
+            file.read(&tmpChar, sizeof(tmpChar));
+            content.push_back(tmpChar);
         }
-        else
-        {
-            file.open(this->getDirectory() + filename);
-            string tmp, readFromFile;
-
-            while(!file.eof())
-            {
-                getline(file, tmp);
-                readFromFile += tmp + "\n";
-            }
-            file.close();
-            content = readFromFile;
-        }
+        file.close();
 
         unique_ptr<fileObject> tmpPtr( new fileObject(filename, content, "text/html") );
 
@@ -52,7 +35,9 @@ bool fileReader::bufferFile(string filename)
         return false;
     }
     catch(const ios_base::failure& e){
-        cerr << "file not found.." << e.what() << endl;
+        cerr << "file not found.."  << endl;
+
+        if(file.is_open()) file.close(); //Close file if there is a file opened
         return false;
     }
 }
