@@ -52,7 +52,7 @@ bool fileReader::bufferFile(string filename)
         return false;
     }
     catch(const ios_base::failure& e){
-        cerr << "file not found..";
+        cerr << "file not found.." << e.what() << endl;
         return false;
     }
 }
@@ -66,7 +66,7 @@ bool fileReader::bufferFile(string filename)
  */
 bool fileReader::setDirectory(string dir)
 {
-    if( dir.back() != '/' || dir.back() != '\\')
+    if( dir.back() != '/' && dir.back() != '\\')
         dir.push_back('/');
     dirMutex.lock();
     //Save old directory
