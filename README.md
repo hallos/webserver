@@ -1,6 +1,4 @@
 # webserver
-Simple windows webserver written in C++
-
-Check out the QtGui branch for the gui version.
+Simple windows console webserver written in C++
 
 Compiled with MinGW64 GCC 4.7.3
