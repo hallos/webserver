@@ -1,4 +1,4 @@
-#include "..\include\ui.h"
+#include "ui.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>

@@ -1,9 +1,9 @@
-#include "../include/http.h"
+#include "http.h"
 #include <iostream>
 #include <string> //toString()
 #include <sstream> //ostringstream
 #include <iomanip>
-#include <windows.h> //SYSTEMTIME
+#include <time.h>
 
 using namespace std;
 
@@ -119,12 +119,19 @@ string httpInterpreter::getResponse()
  */
 string httpInterpreter::getTimeStamp()
 {
-    SYSTEMTIME st;
-    GetSystemTime(&st);
+
+    time_t now;
+    struct tm * date;
+
+    time(&now);
+    date = gmtime(&now);
+
+    //SYSTEMTIME st;
+    //GetSystemTime(&st);
 
     string timeStamp;
     //Append weekday to string
-    switch(st.wDayOfWeek)
+    switch(date->tm_wday/*st.wDayOfWeek*/)
     {
     case 0:
         timeStamp.append("Sun, ");
@@ -149,7 +156,7 @@ string httpInterpreter::getTimeStamp()
         break;
     }
     //Append day in month to string
-    timeStamp.append(to_string(st.wDay) + " ");
+    timeStamp.append(to_string(date->tm_mday/*st.wDay*/) + " ");
     //Append month to string
     switch(st.wMonth)
     {

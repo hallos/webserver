@@ -1,5 +1,5 @@
-#include "..\include\server.h"
-#include "..\include\http.h"
+#include "server.h"
+#include "http.h"
 
 #include <sstream>
 #include <memory>
@@ -68,6 +68,7 @@ bool webServer::isRunning()
 // with handleConnection
 //--------------------------------------------
 bool webServer::runServer(int port){
+    #ifdef WINDOWS
     WSADATA wsaData;
 
     if(WSAStartup(MAKEWORD(2,0), &wsaData)==0)
@@ -75,6 +76,7 @@ bool webServer::runServer(int port){
         //Check winsock version is 2 or higher
         if(LOBYTE(wsaData.wVersion) >= 2)
         {
+    #endif
             SOCKET serverSocket = INVALID_SOCKET;
             sockaddr_in sockAdr = {0};
 
@@ -135,6 +137,7 @@ bool webServer::runServer(int port){
                 i->join();
                 delete i;
             }
+        #ifdef WINDOWS
         }
 
         //Clean up WinSock
@@ -142,6 +145,7 @@ bool webServer::runServer(int port){
         {
             cerr << "Cleanup failed!\n";
         }
+        #endif
     }
     return true;
 }
