@@ -158,7 +158,7 @@ string httpInterpreter::getTimeStamp()
     //Append day in month to string
     timeStamp.append(to_string(date->tm_mday/*st.wDay*/) + " ");
     //Append month to string
-    switch(st.wMonth)
+    switch(date->tm_mon/*st.wMonth*/)
     {
     case 1:
         timeStamp.append("Jan");
@@ -198,10 +198,10 @@ string httpInterpreter::getTimeStamp()
         break;
     }
     //Append year to string
-    timeStamp.append(" " + to_string(st.wYear) + " ");
+    timeStamp.append(" " + to_string(date->tm_year+1900/*st.wYear*/) + " ");
     //Append clock-time to string
     ostringstream oss;
-    oss << internal << setfill('0') << setw(2) << st.wHour << ":" << setw(2) << st.wMinute << ":" << setw(2) << st.wSecond;
+    oss << internal << setfill('0') << setw(2) << date->tm_hour /*st.wHour*/ << ":" << setw(2) << date->tm_min /*st.wMinute*/ << ":" << setw(2) << date->tm_sec /*st.wSecond*/;
     timeStamp.append(oss.str());
     timeStamp.append(" GMT");
 

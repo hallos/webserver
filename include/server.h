@@ -5,6 +5,12 @@
     #define WIN32_MEAN_AND_LEAN
     #include <winsock2.h>
     #include <windows.h>
+#else
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h> //close
+    #define SOCKET int
+    #define INVALID_SOCKET -1
 #endif
 #include <thread>
 #include <mutex>

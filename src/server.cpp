@@ -88,7 +88,7 @@ bool webServer::runServer(int port){
             //Set sockAddr
             sockAdr.sin_family = AF_INET;
             sockAdr.sin_port = htons(port);  //Port-number
-            sockAdr.sin_addr.S_un.S_addr = INADDR_ANY; //Any IP-adress for incoming connections
+            sockAdr.sin_addr.s_addr = INADDR_ANY; //Any IP-adress for incoming connections
 
             //Bind socket
             if(bind(serverSocket,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr))!=0){
@@ -103,13 +103,13 @@ bool webServer::runServer(int port){
             }
 
             sockaddr_in clientSockAdr;
-            int clientSockSize = sizeof(clientSockAdr);
+            socklen_t clientSockSize = sizeof(clientSockAdr);
 
             vector<thread*> connectionThreads;
             fd_set fdRead, fdTemp;
             FD_ZERO(&fdRead);
             FD_SET(serverSocket,&fdRead);
-            TIMEVAL timeOutTime = {1,0};
+            timeval timeOutTime = {1,0};
 
             while(this->isRunning()){
                 //Copy fd_Set to temp variabel for use with select()
@@ -129,15 +129,21 @@ bool webServer::runServer(int port){
             }
 
             //Close server-socket
-            if(serverSocket != INVALID_SOCKET)
+            if(serverSocket != INVALID_SOCKET){
+                #ifdef WINDOWS
                 closesocket(serverSocket);
+                #else
+                close(serverSocket);
+                #endif
+            }
+                
 
             //Join and delete connection-threads
             for(auto i : connectionThreads){
                 i->join();
                 delete i;
             }
-        #ifdef WINDOWS
+    #ifdef WINDOWS
         }
 
         //Clean up WinSock
@@ -145,8 +151,9 @@ bool webServer::runServer(int port){
         {
             cerr << "Cleanup failed!\n";
         }
-        #endif
     }
+    #endif
+
     return true;
 }
 //--------------------------------------------
@@ -176,7 +183,11 @@ void webServer::handleConnection(SOCKET clientSocket)
 
     //Close client-socket
     if(clientSocket != INVALID_SOCKET)
+        #ifdef WINDOWS
         closesocket(clientSocket);
+        #else
+        close(clientSocket);
+        #endif
 }
 
 bool webServer::setDirectory(string &dir)
