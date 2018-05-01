@@ -6,10 +6,10 @@ CFILES=src/file.cpp src/fileReader.cpp src/http.cpp src/ui.cpp src/server.cpp ma
 OUTPUT=webserver
 
 make: $(CFILES)
-	$(CC) $(CFILES) -I$(INCLUDE) $(LINK) -o $(OUTPUT)
+	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -o $(OUTPUT)
 	
 win: $(CFILES)
-	$(CC) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
+	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
 
 test:
 	exit 0
