@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/hallos/webserver.svg?branch=crosscompatible)](https://travis-ci.org/hallos/webserver)
+
+
 # webserver
 Simple windows console webserver written in C++
 

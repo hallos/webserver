@@ -3,6 +3,7 @@ FLAGS=-std=c++11
 INCLUDE=include/
 LINK=-lcurl -pthread
 CFILES=src/file.cpp src/fileReader.cpp src/http.cpp src/ui.cpp src/server.cpp main.cpp
+TESTFILES=test/main.cpp test/httpTest.cpp
 OUTPUT=webserver
 
 make: $(CFILES)
@@ -12,4 +13,9 @@ win: $(CFILES)
 	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
 
 check:
-	cppcheck . --error-exitcode=1 
+	cppcheck . -itest/ --error-exitcode=1 
+
+test: $(TESTFILES)
+	$(CC) $(TESTFILES) -Itest/ -lcppunit -o test.out
+
+.PHONY: test
