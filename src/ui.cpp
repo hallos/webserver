@@ -33,7 +33,9 @@ void printMainMenu(bool running)
  */
 void clearScreen()
 {
+    #ifdef WINDOWS
     system("cls");
+    #endif
 }
 /** \brief Lets user choose a menu option by inputing an integer value
  *
@@ -84,16 +86,18 @@ void chooseDirectory(webServer &server)
 
     clearScreen();
     //Take user input to set directory where index.html is located
-    cout <<  endl << "Set directory for index-file: C:/";
+    cout <<  endl << "Set path to root directory of webserver: ";
     getline(cin, directory);
-    directory = "C:/" + directory + "/";
+    directory = directory + "/";
     //Try to open index.html in directory to control that its a valid directory
     read.open(directory + "index.html");
     if(read){
         cout << "Directory set: " << directory << endl;
         read.close();
         //Set the chosen directory in webServer-object
-        server.setDirectory(directory);
+        if( !server.setDirectory(directory)){
+            cout << "Failed to set directory." << endl;
+        }
     }
     else{
         cout << "Couldn't find " << directory << "index.html" << endl;
