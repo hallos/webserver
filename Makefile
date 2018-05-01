@@ -11,5 +11,5 @@ make: $(CFILES)
 win: $(CFILES)
 	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
 
-test:
-	exit 0
+check:
+	cppcheck --quiet --error-exitcode=1 

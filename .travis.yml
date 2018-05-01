@@ -1,3 +1,6 @@
 language: cpp
 compiler: gcc
-script: make && make test
+
+install: sudo apt-get install -qq cppcheck
+
+script: make && make check
