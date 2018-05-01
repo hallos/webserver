@@ -3,8 +3,9 @@ FLAGS=-std=c++11
 INCLUDE=include/
 LINK=-lcurl -pthread
 CFILES=src/file.cpp src/fileReader.cpp src/http.cpp src/ui.cpp src/server.cpp main.cpp
-TESTFILES=test/main.cpp test/httpTest.cpp
 OUTPUT=webserver
+TESTFILES=test/main.cpp test/httpTest.cpp
+TESTOUTPUT=test.out
 
 make: $(CFILES)
 	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -o $(OUTPUT)
@@ -16,6 +17,6 @@ check:
 	cppcheck . -itest/ --error-exitcode=1 
 
 test: $(TESTFILES)
-	$(CC) $(TESTFILES) -Itest/ -lcppunit -o test.out
+	$(CC) $(TESTFILES) -Itest/ -lcppunit -o $(TESTOUTPUT) && ./$(TESTOUTPUT) 
 
 .PHONY: test
