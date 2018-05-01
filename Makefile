@@ -10,3 +10,6 @@ make: $(CFILES)
 	
 win: $(CFILES)
 	$(CC) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
+
+test:
+	exit 0
