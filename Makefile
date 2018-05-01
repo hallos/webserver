@@ -12,4 +12,4 @@ win: $(CFILES)
 	$(CC) $(FLAGS) $(CFILES) -I$(INCLUDE) $(LINK) -DWINDOWS -o webserver.exe
 
 check:
-	cppcheck --quiet --error-exitcode=1 
+	cppcheck . --error-exitcode=1 
