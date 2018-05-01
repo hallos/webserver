@@ -88,17 +88,17 @@ bool webServer::runServer(int port){
             //Set sockAddr
             sockAdr.sin_family = AF_INET;
             sockAdr.sin_port = htons(port);  //Port-number
-            sockAdr.sin_addr.s_addr = INADDR_ANY; //Any IP-adress for incoming connections
+            sockAdr.sin_addr.s_addr = htonl(INADDR_ANY); //Any IP-adress for incoming connections
 
             //Bind socket
-            if(bind(serverSocket,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr))!=0){
-                cerr << "Couldn't bind socket.";
+            if(bind(serverSocket,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr)) != 0){
+                cerr << "Couldn't bind socket. Error code: " << errno;
                 return false;
             }
 
             //Set socket in listening mode
             if(listen(serverSocket, SOMAXCONN)!=0){
-                cerr << "Couldn't set socket in listening-mode..";
+                cerr << "Couldn't set socket in listening-mode. Error code: " << errno;
                 return false;
             }
 
@@ -112,14 +112,14 @@ bool webServer::runServer(int port){
             timeval timeOutTime = {1,0};
 
             while(this->isRunning()){
-                //Copy fd_Set to temp variabel for use with select()
+                //Copy fd_Read to temp variabel for use with select()
                 fdTemp = fdRead;
                 if( select(0,&fdTemp,NULL,NULL,&timeOutTime) > 0 ){
                     if(FD_ISSET(serverSocket,&fdTemp)){
                         //Accept connection
                         SOCKET clientSocket = accept(serverSocket, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
                         if(clientSocket==INVALID_SOCKET){
-                            cerr << "Accept connection failed.";
+                            cerr << "Accept connection failed. Error code: " << errno;
                             return false;
                         }
                         //Open a new thread that handles the connection
