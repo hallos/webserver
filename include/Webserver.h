@@ -1,5 +1,5 @@
-#ifndef SERVER_H_INCLUDED
-#define SERVER_H_INCLUDED
+#ifndef WEBSERVER_H_INCLUDED
+#define WEBSERVER_H_INCLUDED
 
 #include <thread>
 #include <mutex>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class webServer {
+class Webserver {
 private:
     bool run;
     mutex runMutex;
@@ -18,12 +18,12 @@ private:
     fileReader reader;
 
 public:
-    webServer();
-    ~webServer();
+    Webserver();
+    ~Webserver();
 
     bool isRunning();
     bool runServer(int port);
-    void handleConnection(std::unique_ptr<TCPClientSocket> clientSocket, std::string data);
+    void handleRequest(std::unique_ptr<TCPClientSocket> clientSocket, std::string data);
     bool startServer();
     void stopServer();
 
@@ -31,4 +31,4 @@ public:
 
 };
 
-#endif // SERVER_H_INCLUDED
+#endif

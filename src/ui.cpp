@@ -79,7 +79,7 @@ int getMenuOption(int maxOptions)
  * \return void
  *
  */
-void chooseDirectory(webServer &server)
+void chooseDirectory(Webserver &server)
 {
     string directory;
     ifstream read;

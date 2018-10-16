@@ -1,8 +1,10 @@
 #include "TCPServerSocket.h"
 
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
+
 
 /**
  * Constructor
@@ -37,7 +39,6 @@ TCPServerSocket::TCPServerSocket(std::string hostname, int port)
  */ 
 TCPServerSocket::~TCPServerSocket()
 {
-    //Close server-socket
     if(socket_ != INVALID_SOCKET){
         close(socket_);
     }
@@ -46,19 +47,35 @@ TCPServerSocket::~TCPServerSocket()
 /**
  * 
  */
-std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection(std::string& message)
+std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection(uint32_t timeout, std::string& message)
 {
     sockaddr_in clientSockAdr;
     socklen_t clientSockSize = sizeof(clientSockAdr);
 
-    SOCKET clientSocket = accept(socket_, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
-    if (clientSocket==INVALID_SOCKET)
+    /*fd_set fdRead;
+    FD_ZERO(&fdRead);
+    FD_SET(socket_,&fdRead);
+    timeval timeOutTime = {timeout,0};
+
+    int retVal = select(1,&fdRead,NULL,NULL,&timeOutTime);
+    if (retVal <= 0)
     {
-        //cerr << "Accept connection failed. Error code: " << errno;
         return std::unique_ptr<TCPClientSocket>();
     }
+
+    if (!FD_ISSET(socket_,&fdRead))
+    {
+        return std::unique_ptr<TCPClientSocket>();
+    }*/
+
+    SOCKET clientSocket = accept(socket_, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
+    if (clientSocket == INVALID_SOCKET)
+    {
+        return std::unique_ptr<TCPClientSocket>();
+    }
+
     char recBuffer[1000];
     recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
     message = recBuffer;
-    return std::unique_ptr<TCPClientSocket>(new TCPClientSocket(clientSocket));//std::make_unique<TCPClientSocket>(clientSocket);       
+    return std::unique_ptr<TCPClientSocket>(new TCPClientSocket(clientSocket));    
 } 

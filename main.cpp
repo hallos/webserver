@@ -1,7 +1,7 @@
 #include <thread>
 #include <vector>
 
-#include "include/server.h"
+#include "include/Webserver.h"
 #include "include/ui.h"
 
 using namespace std;
@@ -10,7 +10,7 @@ int main()
 {
     system("title webServer"); //Set title of command-prompt
     vector<thread*> Threads;
-    webServer server;
+    Webserver server;
     bool exit=false;
 
     do{
@@ -18,7 +18,7 @@ int main()
         switch(getMenuOption(4))
         {
         case 1:
-            Threads.push_back(new thread(&webServer::startServer,&server));
+            Threads.push_back(new thread(&Webserver::startServer,&server));
             break;
         case 2:
             server.stopServer();
