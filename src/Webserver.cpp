@@ -1,4 +1,4 @@
-#include "server.h"
+#include "Webserver.h"
 #include "http.h"
 
 #include <sstream>
@@ -72,7 +72,7 @@ bool webServer::isRunning()
 //--------------------------------------------
 bool webServer::runServer(int port){
     TCPServerSocket serverSocket("0.0.0.0", port);
-
+    std::vector<thread*> connectionThreads;
 
     while(this->isRunning())
     {
@@ -82,7 +82,20 @@ bool webServer::runServer(int port){
         {
             return false;
         }    
-        clientSocket->sendData("Hello World!");
+        //clientSocket->sendData("Hello World!");
+        //Open a new thread that handles the connection
+        connectionThreads.push_back(
+            new thread(&webServer::handleConnection,
+                       this,
+                       std::move(clientSocket),
+                       data));
+                   
+    }
+
+    //Join and delete connection-threads
+    for(auto i : connectionThreads){
+        i->join();
+        delete i;
     }
 
     return true;
@@ -92,13 +105,13 @@ bool webServer::runServer(int port){
 // Takes a socket to a accepted connection
 // and handles the incoming HTTP request
 //--------------------------------------------
-void webServer::handleConnection(SOCKET clientSocket)
+void webServer::handleConnection(std::unique_ptr<TCPClientSocket> clientSocket, std::string msg)
 {
-    char recBuffer[1000];
-    recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
-    cout << "Incoming req:" << endl << recBuffer << endl;
-    string receivedRequest = recBuffer;
-    unique_ptr<httpInterpreter> interpreter (new httpInterpreter(receivedRequest));
+    //char recBuffer[1000];
+    //recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
+    //cout << "Incoming req:" << endl << recBuffer << endl;
+    //string receivedRequest = recBuffer;
+    unique_ptr<httpInterpreter> interpreter (new httpInterpreter(msg));
     string requestedFile;
     if(interpreter->interpretRequest(requestedFile))
     {
@@ -108,17 +121,9 @@ void webServer::handleConnection(SOCKET clientSocket)
             interpreter->constructResponse(content, contType);
         }
         string message = interpreter->getResponse();
-        // Send message
-        send(clientSocket, message.c_str(), message.length()+1, 0);
+        // Send response
+        clientSocket->sendData(message);
     }
-
-    //Close client-socket
-    if(clientSocket != INVALID_SOCKET)
-        #ifdef WINDOWS
-        closesocket(clientSocket);
-        #else
-        close(clientSocket);
-        #endif
 }
 
 bool webServer::setDirectory(string &dir)
