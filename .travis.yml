@@ -1,6 +1,6 @@
 language: cpp
 compiler: gcc
 
-install: sudo apt-get install -qq cppcheck libcppunit-dev
+install: sudo apt-get install -qq cmake
 
-script: make && make check && make test
+script: mkdir build && cd build && cmake .. && make 
