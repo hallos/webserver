@@ -5,4 +5,4 @@ install: sudo apt-get install -qq cmake
 
 script: 
   - mkdir build && cd build && cmake .. && make
-  - ./WebserverTest  
+  - ./build/WebserverTest  
