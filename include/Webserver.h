@@ -23,7 +23,7 @@ public:
 
     bool isRunning();
     bool runServer(int port);
-    void handleRequest(std::unique_ptr<TCPClientSocket> clientSocket, std::string data);
+    void handleRequest(std::unique_ptr<TCPClientSocket> clientSocket);
     bool startServer();
     void stopServer();
 

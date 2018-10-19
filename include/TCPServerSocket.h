@@ -15,7 +15,7 @@ public:
     TCPServerSocket(std::string hostname, int port);
     ~TCPServerSocket();
 
-    std::unique_ptr<TCPClientSocket> acceptConnection(uint32_t timeout, std::string& message);
+    std::unique_ptr<TCPClientSocket> acceptConnection();
 private:
     SOCKET socket_;
 };

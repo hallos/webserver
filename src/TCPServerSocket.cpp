@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
+#include <iostream>
 
 
 /**
@@ -47,7 +48,7 @@ TCPServerSocket::~TCPServerSocket()
 /**
  * 
  */
-std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection(uint32_t timeout, std::string& message)
+std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection()
 {
     sockaddr_in clientSockAdr;
     socklen_t clientSockSize = sizeof(clientSockAdr);
@@ -55,7 +56,10 @@ std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection(uint32_t time
     /*fd_set fdRead;
     FD_ZERO(&fdRead);
     FD_SET(socket_,&fdRead);
-    timeval timeOutTime = {timeout,0};
+    struct timeval timeOutTime;// = {timeout,0};
+
+    timeOutTime.tv_sec = timeout;
+    timeOutTime.tv_usec = 0;
 
     int retVal = select(1,&fdRead,NULL,NULL,&timeOutTime);
     if (retVal <= 0)
@@ -74,8 +78,5 @@ std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection(uint32_t time
         return std::unique_ptr<TCPClientSocket>();
     }
 
-    char recBuffer[1000];
-    recv(clientSocket, recBuffer, sizeof(recBuffer), 0);
-    message = recBuffer;
     return std::unique_ptr<TCPClientSocket>(new TCPClientSocket(clientSocket));    
 } 

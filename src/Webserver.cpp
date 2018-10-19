@@ -57,16 +57,14 @@ bool Webserver::runServer(int port){
 
     while(this->isRunning())
     {
-        std::string data;
-        auto clientSocket = serverSocket.acceptConnection(timeout, data);
+        auto clientSocket = serverSocket.acceptConnection();
         if (clientSocket)
         {    
             //Open a new thread that handles the connection
             connectionThreads.emplace_back(
                 new thread(&Webserver::handleRequest,
                         this,
-                        std::move(clientSocket),
-                        data));
+                        std::move(clientSocket)));
         }          
     }
 
@@ -79,8 +77,9 @@ bool Webserver::runServer(int port){
     return true;
 }
 
-void Webserver::handleRequest(std::unique_ptr<TCPClientSocket> clientSocket, std::string msg)
+void Webserver::handleRequest(std::unique_ptr<TCPClientSocket> clientSocket)
 {
+    std::string msg = clientSocket->receiveData();
     std::unique_ptr<httpInterpreter> interpreter (new httpInterpreter(msg));
     std::string requestedFile;
     if(interpreter->interpretRequest(requestedFile))

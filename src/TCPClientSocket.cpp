@@ -21,6 +21,20 @@ TCPClientSocket::~TCPClientSocket()
 
 /**
  * 
+ */
+std::string TCPClientSocket::receiveData()
+{
+    char recBuffer[1000];
+    int numBytes = recv(socket_, recBuffer, sizeof(recBuffer), 0);
+    if (numBytes == -1 || numBytes == 0)
+    {
+        return std::string();
+    }
+    return std::string(recBuffer, numBytes);
+} 
+
+/**
+ * 
  */ 
 bool TCPClientSocket::sendData(const std::string& buffer)
 {

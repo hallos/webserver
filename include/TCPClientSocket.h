@@ -12,6 +12,7 @@ public:
     TCPClientSocket(Socket socket);
     ~TCPClientSocket();
 
+    std::string receiveData();
     bool sendData(const std::string& buffer);
 private:
     Socket socket_;
