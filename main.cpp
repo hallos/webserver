@@ -1,8 +1,9 @@
 #include <thread>
 #include <vector>
 
-#include "include/Webserver.h"
-#include "include/ui.h"
+#include "Webserver.h"
+#include "ui.h"
+#include "ctpl_stl.h"
 
 using namespace std;
 
@@ -10,7 +11,8 @@ int main()
 {
     system("title webServer"); //Set title of command-prompt
     vector<thread*> Threads;
-    Webserver server;
+    auto threadPool = std::make_shared<ctpl::thread_pool>(4);
+    Webserver server(threadPool);
     bool exit=false;
 
     do{
