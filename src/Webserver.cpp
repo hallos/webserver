@@ -2,7 +2,6 @@
 #include "http.h"
 
 #include <sstream>
-#include <memory>
 #include <iostream>
 #include <vector>
 
@@ -10,9 +9,10 @@
 #include "TCPClientSocket.h"
 
 
-Webserver::Webserver()
+Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool) : threadPool_(threadPool)
 {
     run = false; //Set run-flag as false by default
+    reader = std::make_shared<fileReader>();
 }
 
 Webserver::~Webserver()
@@ -52,50 +52,37 @@ bool Webserver::isRunning()
 
 bool Webserver::runServer(int port){
     TCPServerSocket serverSocket("0.0.0.0", port);
-    std::vector<std::unique_ptr<std::thread>> connectionThreads;
-    int timeout = 1;
 
     while(this->isRunning())
     {
         auto clientSocket = serverSocket.acceptConnection();
         if (clientSocket)
         {    
-            //Open a new thread that handles the connection
-            connectionThreads.emplace_back(
-                new thread(&Webserver::handleRequest,
-                        this,
-                        std::move(clientSocket)));
+            threadPool_->push(
+                [clientSocket = std::move(clientSocket), reader = reader](int id)
+                {
+                    std::string msg = clientSocket->receiveData();
+                    httpInterpreter interpreter(msg);
+                    std::string requestedFile;
+                    if (interpreter.interpretRequest(requestedFile))
+                    {
+                        std::string content, contType;
+                        if (reader->getFile(requestedFile, content, contType))
+                        {
+                            interpreter.constructResponse(content, contType);
+                        }
+                        std::string response = interpreter.getResponse();
+                        // Send response
+                        clientSocket->sendData(response);
+                    }
+                });
         }          
-    }
-
-    //Join connection-threads
-    for(auto& i : connectionThreads)
-    {
-        i->join();
     }
 
     return true;
 }
 
-void Webserver::handleRequest(std::unique_ptr<TCPClientSocket> clientSocket)
-{
-    std::string msg = clientSocket->receiveData();
-    std::unique_ptr<httpInterpreter> interpreter (new httpInterpreter(msg));
-    std::string requestedFile;
-    if(interpreter->interpretRequest(requestedFile))
-    {
-        std::string content, contType;
-        if(reader.getFile(requestedFile, content, contType))
-        {
-            interpreter->constructResponse(content, contType);
-        }
-        std::string response = interpreter->getResponse();
-        // Send response
-        clientSocket->sendData(response);
-    }
-}
-
 bool Webserver::setDirectory(string &dir)
 {
-    return reader.setDirectory(dir);
+    return reader->setDirectory(dir);
 }
