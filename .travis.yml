@@ -13,4 +13,4 @@ install:
 
 script: 
   - mkdir build && cd build && cmake .. && make
-  - ./build/test/WebserverTest  
+  - ./test/WebserverTest  
