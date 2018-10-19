@@ -3,4 +3,6 @@ compiler: gcc
 
 install: sudo apt-get install -qq cmake
 
-script: mkdir build && cd build && cmake .. && make 
+script: 
+  - mkdir build && cd build && cmake .. && make
+  - ./WebserverTest  
