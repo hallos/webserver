@@ -9,15 +9,18 @@
 #include "TCPClientSocket.h"
 
 
-Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool) : threadPool_(threadPool)
+Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
+                     const std::string& rootDirectory): 
+                        threadPool_(threadPool)
 {
     run = false; //Set run-flag as false by default
     reader = std::make_shared<fileReader>();
+    reader->setDirectory(rootDirectory);
 }
 
 Webserver::~Webserver()
 {
-    //deconstructor
+    //destructor
 }
 
 bool Webserver::startServer()
@@ -50,8 +53,8 @@ bool Webserver::isRunning()
     return tmp;
 }
 
-bool Webserver::runServer(int port){
-    TCPServerSocket serverSocket("0.0.0.0", port);
+void Webserver::runServer(int port){
+    TCPServerSocket serverSocket(port);
 
     while(this->isRunning())
     {
@@ -78,11 +81,4 @@ bool Webserver::runServer(int port){
                 });
         }          
     }
-
-    return true;
-}
-
-bool Webserver::setDirectory(string &dir)
-{
-    return reader->setDirectory(dir);
 }

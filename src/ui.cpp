@@ -23,7 +23,6 @@ void printMainMenu(bool running)
     cout << endl << endl
             << "1. Start server" << endl
             << "2. Stop server" << endl
-            << "3. Set directory" << endl
             << "0. EXIT" << endl;
 }
 /** \brief Clears windows console window
@@ -35,6 +34,8 @@ void clearScreen()
 {
     #ifdef WINDOWS
     system("cls");
+    #else
+    system("clear");
     #endif
 }
 /** \brief Lets user choose a menu option by inputing an integer value
@@ -72,37 +73,4 @@ int getMenuOption(int maxOptions)
         }
     }while(!inputOK);
     return tmpOption;
-}
-/** \brief Lets user choose directory where the index-file is located
- *
- * \param &server a reference to the webServer object
- * \return void
- *
- */
-void chooseDirectory(Webserver &server)
-{
-    string directory;
-    ifstream read;
-
-    clearScreen();
-    //Take user input to set directory where index.html is located
-    cout <<  endl << "Set path to root directory of webserver: ";
-    getline(cin, directory);
-    directory = directory + "/";
-    //Try to open index.html in directory to control that its a valid directory
-    read.open(directory + "index.html");
-    if(read){
-        cout << "Directory set: " << directory << endl;
-        read.close();
-        //Set the chosen directory in webServer-object
-        if( !server.setDirectory(directory)){
-            cout << "Failed to set directory." << endl;
-        }
-    }
-    else{
-        cout << "Couldn't find " << directory << "index.html" << endl;
-    }
-
-    cout << "Press ENTER to return...";
-    cin.get();
 }

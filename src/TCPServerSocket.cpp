@@ -4,13 +4,11 @@
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
-#include <iostream>
-
 
 /**
  * Constructor
  */ 
-TCPServerSocket::TCPServerSocket(std::string hostname, int port)
+TCPServerSocket::TCPServerSocket(int port)
 {
     socket_ = INVALID_SOCKET;
     sockaddr_in sockAdr = {0};
@@ -78,5 +76,5 @@ std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection()
         return std::unique_ptr<TCPClientSocket>();
     }
 
-    return std::unique_ptr<TCPClientSocket>(new TCPClientSocket(clientSocket));    
+    return std::make_unique<TCPClientSocket>(clientSocket);    
 } 

@@ -4,15 +4,13 @@
 #define SOCKET int
 #define INVALID_SOCKET -1
 
-#include <string>
 #include <memory>
-
 #include "TCPClientSocket.h"
 
 class TCPServerSocket
 {
 public:
-    TCPServerSocket(std::string hostname, int port);
+    TCPServerSocket(int port);
     ~TCPServerSocket();
 
     std::unique_ptr<TCPClientSocket> acceptConnection();

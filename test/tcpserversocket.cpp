@@ -6,9 +6,9 @@
 
 TEST_CASE( "", "[serversocket]" ) 
 {
-    TCPServerSocket serverSocket("127.0.0.1", 8080); 
-    std::string data;
-    auto clientSocket = serverSocket.acceptConnection(data);
+    TCPServerSocket serverSocket(8080); 
+    std::string data = "Hello Socket!";
+    auto clientSocket = serverSocket.acceptConnection();
 
     REQUIRE(clientSocket);
 

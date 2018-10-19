@@ -12,6 +12,5 @@
 void printMainMenu(bool running);
 int getMenuOption(int maxOptions);
 void clearScreen();
-void chooseDirectory(Webserver &server);
 
 #endif // UI_H_INCLUDED

@@ -12,24 +12,23 @@
 
 using namespace std;
 
-class Webserver {
+class Webserver 
+{
 private:
     bool run;
     mutex runMutex;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
     std::shared_ptr<fileReader> reader;
 
+    void runServer(int port);
+
 public:
-    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool);
+    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, const std::string& rootDirectory);
     ~Webserver();
 
     bool isRunning();
-    bool runServer(int port);
     bool startServer();
     void stopServer();
-
-    bool setDirectory(string &dir);
-
 };
 
 #endif
