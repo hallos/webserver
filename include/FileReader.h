@@ -10,11 +10,10 @@
 class FileReader
 {
     public:
-        FileReader() {}
+        FileReader(const std::string& rootDirectory);
         ~FileReader() {}
 
         bool getFile(const std::string &filename, std::string &retFileContent, std::string &retContentType);
-        bool setDirectory(std::string dir);
         std::string getDirectory();
 
     private:

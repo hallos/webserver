@@ -2,6 +2,17 @@
 #include <fstream>
 #include "Logger.h"
 
+/**
+ * 
+ */ 
+FileReader::FileReader(const std::string& rootDirectory): directory(rootDirectory)
+{
+    if (directory.back() != '/' && directory.back() != '\\')
+    {
+        directory.push_back('/');
+    }
+}
+
 /** \brief Buffers a file in server-directory to a new file object
  *  and adds it to the fileCache
  *
@@ -41,34 +52,6 @@ bool FileReader::bufferFile(std::string filename)
         if(file.is_open()) file.close(); //Close file if there is a file opened
         return false;
     }
-}
-
-/** \brief Sets the working directory of the FileReader
- *  and buffers the index.html file to the fileCache
- *
- * \param dir
- * \return bool - True if directory is successfully set and a index.html file is buffered, false o/w
- *
- */
-bool FileReader::setDirectory(std::string dir)
-{
-    if( dir.back() != '/' && dir.back() != '\\')
-        dir.push_back('/');
-    dirMutex.lock();
-    //Save old directory
-    std::string oldDir = directory;
-    //Set directory string
-    directory = dir;
-    dirMutex.unlock();
-    //Try to buffer index-file to fileCache
-    if(bufferFile("index.html")){
-        return true;
-    }
-    //Set directory as old-directory if buffering of index file fails
-    dirMutex.lock();
-    directory = oldDir;
-    dirMutex.unlock();
-    return false;
 }
 
 /** \brief Returns current working directory
