@@ -22,7 +22,7 @@ private:
     void runServer(int port);
 
 public:
-    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, const std::string& rootDirectory);
+    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, std::shared_ptr<FileReader> fileReader);
     ~Webserver();
 
     bool isRunning();

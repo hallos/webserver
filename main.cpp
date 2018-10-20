@@ -13,7 +13,8 @@ int main()
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // TODO: Read root dir from config file
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
-    Webserver server(threadPool, rootDir);
+    auto fileReader = std::make_shared<FileReader>(rootDir);
+    Webserver server(threadPool, fileReader);
     bool exit = false;
 
     do{

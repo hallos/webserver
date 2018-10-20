@@ -8,11 +8,11 @@
 
 
 Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
-                     const std::string& rootDirectory): 
-                        threadPool_(threadPool)
+                     std::shared_ptr<FileReader> fileReader): 
+                        threadPool_(threadPool),
+                        fileReader_(fileReader)
 {
     run = false; //Set run-flag as false by default
-    fileReader_ = std::make_shared<FileReader>(rootDirectory);
 }
 
 Webserver::~Webserver()
