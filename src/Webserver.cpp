@@ -1,12 +1,10 @@
 #include "Webserver.h"
-#include "http.h"
-
-#include <sstream>
-#include <iostream>
 #include <vector>
 
+#include "http.h"
 #include "TCPServerSocket.h"
 #include "TCPClientSocket.h"
+#include "Logger.h"
 
 
 Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
@@ -14,8 +12,8 @@ Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool,
                         threadPool_(threadPool)
 {
     run = false; //Set run-flag as false by default
-    reader = std::make_shared<fileReader>();
-    reader->setDirectory(rootDirectory);
+    fileReader_ = std::make_shared<FileReader>();
+    fileReader_->setDirectory(rootDirectory);
 }
 
 Webserver::~Webserver()
@@ -33,7 +31,7 @@ bool Webserver::startServer()
         return true;
     }
     else{
-        cout << "Server already running.." << endl;
+        Logger::log("Webserver::startServer(): Server is already running.");
         return false;
     }
 }
@@ -62,7 +60,7 @@ void Webserver::runServer(int port){
         if (clientSocket)
         {    
             threadPool_->push(
-                [clientSocket = std::move(clientSocket), reader = reader](int id)
+                [clientSocket = std::move(clientSocket), fileReader = fileReader_](int id)
                 {
                     std::string msg = clientSocket->receiveData();
                     httpInterpreter interpreter(msg);
@@ -70,7 +68,7 @@ void Webserver::runServer(int port){
                     if (interpreter.interpretRequest(requestedFile))
                     {
                         std::string content, contType;
-                        if (reader->getFile(requestedFile, content, contType))
+                        if (fileReader->getFile(requestedFile, content, contType))
                         {
                             interpreter.constructResponse(content, contType);
                         }

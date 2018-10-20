@@ -6,19 +6,18 @@
 #include <string>
 #include <memory>
 #include "http.h"
-#include "fileReader.h"
+#include "FileReader.h"
 #include "TCPClientSocket.h"
 #include "ctpl_stl.h"
 
-using namespace std;
 
 class Webserver 
 {
 private:
     bool run;
-    mutex runMutex;
+    std::mutex runMutex;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
-    std::shared_ptr<fileReader> reader;
+    std::shared_ptr<FileReader> fileReader_;
 
     void runServer(int port);
 

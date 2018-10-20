@@ -8,8 +8,9 @@ add_library(WebserverLib SHARED
                          src/http.cpp
                          src/Webserver.cpp
                          src/ui.cpp
-                         src/file.cpp
-                         src/fileReader.cpp)
+                         src/File.cpp
+                         src/FileReader.cpp
+                         src/Logger.cpp)
 
 include_directories(external
                     include)

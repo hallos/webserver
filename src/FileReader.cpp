@@ -1,6 +1,6 @@
-#include "fileReader.h"
+#include "FileReader.h"
 #include <fstream>
-#include <iostream>
+#include "Logger.h"
 
 /** \brief Buffers a file in server-directory to a new file object
  *  and adds it to the fileCache
@@ -9,15 +9,16 @@
  * \return bool - True if file is successfully buffered, false o/w
  *
  */
-bool fileReader::bufferFile(string filename)
+bool FileReader::bufferFile(std::string filename)
 {
-    fstream file;
-    file.exceptions( ifstream::failbit | ifstream::badbit );
+    std::fstream file;
+    file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
 
-    try{
-        string content;
+    try
+    {
+        std::string content;
         //Open file and read the file to string
-        file.open(this->getDirectory() + filename, ios_base::in|ios_base::binary);
+        file.open(this->getDirectory() + filename, std::ios_base::in|std::ios_base::binary);
         file.seekg(0, file.beg);
         char tmpChar = 0;
         while( file.peek() != EOF )
@@ -27,35 +28,35 @@ bool fileReader::bufferFile(string filename)
         }
         file.close();
 
-        unique_ptr<fileObject> tmpPtr( new fileObject(filename, content, "text/html") );
+        std::unique_ptr<File> tmpPtr( new File(filename, content, "text/html") );
 
-        if( this->addFileToCache(move(tmpPtr) ))
+        if( this->addFileToCache(std::move(tmpPtr)) )
             return true;
 
         return false;
     }
-    catch(const ios_base::failure& e){
-        cerr << "file not found.."  << endl;
-
+    catch(const std::ios_base::failure& e)
+    {
+        Logger::log("FileReader::bufferFile(): file " + directory + filename + "not found.");
         if(file.is_open()) file.close(); //Close file if there is a file opened
         return false;
     }
 }
 
-/** \brief Sets the working directory of the fileReader
+/** \brief Sets the working directory of the FileReader
  *  and buffers the index.html file to the fileCache
  *
  * \param dir
  * \return bool - True if directory is successfully set and a index.html file is buffered, false o/w
  *
  */
-bool fileReader::setDirectory(string dir)
+bool FileReader::setDirectory(std::string dir)
 {
     if( dir.back() != '/' && dir.back() != '\\')
         dir.push_back('/');
     dirMutex.lock();
     //Save old directory
-    string oldDir = directory;
+    std::string oldDir = directory;
     //Set directory string
     directory = dir;
     dirMutex.unlock();
@@ -75,26 +76,30 @@ bool fileReader::setDirectory(string dir)
  * \return string
  *
  */
-string fileReader::getDirectory()
+std::string FileReader::getDirectory()
 {
     dirMutex.lock();
-    string tmp = directory;
+    std::string tmp = directory;
     dirMutex.unlock();
     return tmp;
 }
 
 /** \brief Adds a file to the fileCache.
  *
- * \param newFile unique_ptr<fileObject> - Pointer to fileObject to be added
+ * \param newFile unique_ptr<File> - Pointer to File to be added
  * \return bool - True if file is successfully added to cache, false o/w
  *
  */
-bool fileReader::addFileToCache(unique_ptr<fileObject> newFile)
+bool FileReader::addFileToCache(std::unique_ptr<File> newFile)
 {
     if(newFile)
     {
         cacheMutex.lock();
-        fileCache.insert( pair<string, unique_ptr<fileObject>>(newFile->getFilename(), move(newFile) ));
+        fileCache.insert( 
+            std::pair<std::string, std::unique_ptr<File>>(
+                newFile->getFilename(), 
+                std::move(newFile))
+        );
         cacheMutex.unlock();
         return true;
     }
@@ -110,7 +115,7 @@ bool fileReader::addFileToCache(unique_ptr<fileObject> newFile)
  * \return bool - True if requested file is found, false o/w
  *
  */
-bool fileReader::getFile(const string &filename, string &retFileContent, string &retContentType)
+bool FileReader::getFile(const std::string &filename, std::string &retFileContent, std::string &retContentType)
 {
     if(!filename.empty())
     {

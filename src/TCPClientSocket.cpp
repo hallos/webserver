@@ -14,7 +14,8 @@ TCPClientSocket::TCPClientSocket(Socket socket): socket_(socket) {}
  */ 
 TCPClientSocket::~TCPClientSocket()
 {
-    if(socket_ != INVALID_SOCKET){
+    if (socket_ != INVALID_SOCKET)
+    {
         close(socket_);
     }
 }

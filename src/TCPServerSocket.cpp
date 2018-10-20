@@ -5,6 +5,8 @@
 #include <arpa/inet.h>
 #include <unistd.h> //close
 
+#include "Logger.h"
+
 /**
  * Constructor
  */ 
@@ -13,8 +15,9 @@ TCPServerSocket::TCPServerSocket(int port)
     socket_ = INVALID_SOCKET;
     sockaddr_in sockAdr = {0};
 
-    if((socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET){
-        //std::cerr << "INVALID Socket.";
+    if ((socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
+    {
+        Logger::log("TCPServerSocket: INVALID Socket.");
     }
 
     //Set sockAddr
@@ -23,13 +26,15 @@ TCPServerSocket::TCPServerSocket(int port)
     sockAdr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     //Bind socket
-    if(bind(socket_,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr)) != 0){
-        //std::cerr << "Couldn't bind socket. Error code: " << errno;
+    if (bind(socket_,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr)) != 0)
+    {
+        Logger::log("Couldn't bind socket. Error code: " + errno);
     }
 
     //Set socket in listening mode
-    if(listen(socket_, SOMAXCONN)!=0){
-        //std::cerr << "Couldn't set socket in listening-mode. Error code: " << errno;
+    if (listen(socket_, SOMAXCONN)!=0)
+    {
+        Logger::log("Couldn't set socket in listening-mode. Error code: " + errno);
     }        
 }
 
@@ -38,7 +43,8 @@ TCPServerSocket::TCPServerSocket(int port)
  */ 
 TCPServerSocket::~TCPServerSocket()
 {
-    if(socket_ != INVALID_SOCKET){
+    if (socket_ != INVALID_SOCKET)
+    {
         close(socket_);
     }
 }
