@@ -52,31 +52,41 @@ bool Webserver::isRunning()
 }
 
 void Webserver::runServer(int port){
-    TCPServerSocket serverSocket(port);
-
-    while(this->isRunning())
+    try
     {
-        auto clientSocket = serverSocket.acceptConnection();
-        if (clientSocket)
-        {    
-            threadPool_->push(
-                [clientSocket = std::move(clientSocket), fileReader = fileReader_](int id)
-                {
-                    std::string msg = clientSocket->receiveData();
-                    httpInterpreter interpreter(msg);
-                    std::string requestedFile;
-                    if (interpreter.interpretRequest(requestedFile))
+        TCPServerSocket serverSocket(port);
+
+        while(this->isRunning())
+        {
+            auto clientSocket = serverSocket.acceptConnection();
+            if (clientSocket)
+            {    
+                threadPool_->push(
+                    [clientSocket = std::move(clientSocket), fileReader = fileReader_](int id)
                     {
-                        std::string content, contType;
-                        if (fileReader->getFile(requestedFile, content, contType))
+                        std::string msg = clientSocket->receiveData();
+                        httpInterpreter interpreter(msg);
+                        std::string requestedFile;
+                        if (interpreter.interpretRequest(requestedFile))
                         {
-                            interpreter.constructResponse(content, contType);
+                            std::string content, contType;
+                            if (fileReader->getFile(requestedFile, content, contType))
+                            {
+                                interpreter.constructResponse(content, contType);
+                            }
+                            std::string response = interpreter.getResponse();
+                            // Send response
+                            clientSocket->sendData(response);
                         }
-                        std::string response = interpreter.getResponse();
-                        // Send response
-                        clientSocket->sendData(response);
-                    }
-                });
-        }          
+                    });
+            }          
+        }
+    }
+    catch (TCPSocketException& e)
+    {
+        Logger::log("Webserver::runServer(): Socket failed: " + e.what());
+        Logger::log("Webserver::runServer(): Shuttind down server");
+        stopServer();
+        return;
     }
 }

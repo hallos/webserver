@@ -12,30 +12,29 @@
  */ 
 TCPServerSocket::TCPServerSocket(int port)
 {
-    socket_ = INVALID_SOCKET;
-    sockaddr_in sockAdr = {0};
-
-    if ((socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
+    socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (socket_ == INVALID_SOCKET)
     {
-        Logger::log("TCPServerSocket: INVALID Socket.");
-    }
+        Logger::log("TCPServerSocket: Could not create socket.");
+        throw TCPSocketException("Could not create socket.");
+    } 
 
-    //Set sockAddr
+    sockaddr_in sockAdr = {0};
     sockAdr.sin_family = AF_INET;
     sockAdr.sin_port = htons(port);  
     sockAdr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    //Bind socket
-    if (bind(socket_,reinterpret_cast<sockaddr*>(&sockAdr),sizeof(sockAdr)) != 0)
+    if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
-        Logger::log("Couldn't bind socket. Error code: " + errno);
+        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + errno);
+        throw TCPSocketException("Could not bind socket.");
     }
 
-    //Set socket in listening mode
     if (listen(socket_, SOMAXCONN)!=0)
     {
-        Logger::log("Couldn't set socket in listening-mode. Error code: " + errno);
-    }        
+        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + errno);
+        throw TCPSocketException("Could not set socket in listening mode.");
+    }   
 }
 
 /**
