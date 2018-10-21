@@ -7,7 +7,7 @@
 #include <memory>
 #include "http.h"
 #include "FileReader.h"
-#include "TCPClientSocket.h"
+#include "TCPServerSocket.h"
 #include "ctpl_stl.h"
 
 
@@ -18,11 +18,14 @@ private:
     std::mutex runMutex;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
     std::shared_ptr<FileReader> fileReader_;
+    std::shared_ptr<TCPServerSocket> serverSocket_;
 
     void runServer(int port);
 
 public:
-    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, std::shared_ptr<FileReader> fileReader);
+    Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
+              std::shared_ptr<FileReader> fileReader,
+              std::shared_ptr<TCPServerSocket> serverSocket);
     ~Webserver();
 
     bool isRunning();

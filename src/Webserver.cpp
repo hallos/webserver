@@ -2,15 +2,16 @@
 #include <vector>
 
 #include "http.h"
-#include "TCPServerSocket.h"
 #include "TCPClientSocket.h"
 #include "Logger.h"
 
 
 Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
-                     std::shared_ptr<FileReader> fileReader): 
+                     std::shared_ptr<FileReader> fileReader,
+                     std::shared_ptr<TCPServerSocket> serverSocket): 
                         threadPool_(threadPool),
-                        fileReader_(fileReader)
+                        fileReader_(fileReader),
+                        serverSocket_(serverSocket)
 {
     run = false; //Set run-flag as false by default
 }
@@ -53,18 +54,16 @@ bool Webserver::isRunning()
 void Webserver::runServer(int port){
     try
     {
-        TCPServerSocket serverSocket(port);
-
         while(this->isRunning())
         {
-            auto clientSocket = serverSocket.acceptConnection();
+            auto clientSocket = serverSocket_->acceptConnection();
             if (clientSocket)
             {    
                 threadPool_->push(
                     [clientSocket = std::move(clientSocket), fileReader = fileReader_](int id)
                     {
-                        std::string msg = clientSocket->receiveData();
-                        httpInterpreter interpreter(msg);
+                        std::string request = clientSocket->receiveData();
+                        httpInterpreter interpreter(request);
                         std::string requestedFile;
                         if (interpreter.interpretRequest(requestedFile))
                         {

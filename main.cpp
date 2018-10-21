@@ -11,10 +11,12 @@ int main()
     system("title webServer"); //Set title of command-prompt
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
-    // TODO: Read root dir from config file
+    // TODO: Read root dir and port from config file
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
+    int port = 8090;
     auto fileReader = std::make_shared<FileReader>(rootDir);
-    Webserver server(threadPool, fileReader);
+    auto serverSocket = std::make_shared<TCPServerSocket>(port);
+    Webserver server(threadPool, fileReader, serverSocket);
     bool exit = false;
 
     do{
