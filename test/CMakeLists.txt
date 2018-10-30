@@ -5,4 +5,5 @@ project(WebserverTest)
 add_executable(WebserverTest main.cpp
                              http.cpp)
 
-target_link_libraries(WebserverTest WebserverLib)
+target_link_libraries(WebserverTest WebserverLib
+                                    pthread)
