@@ -67,10 +67,10 @@ void Webserver::runServer(int port){
                         std::string requestedFile;
                         if (interpreter.interpretRequest(requestedFile))
                         {
-                            std::string content, contType;
-                            if (fileReader->getFile(requestedFile, content, contType))
+                            auto file = fileReader->getFile(requestedFile);
+                            if (file)
                             {
-                                interpreter.constructResponse(content, contType);
+                                interpreter.constructResponse(file->getContent(), file->getContentType());
                             }
                             std::string response = interpreter.getResponse();
                             // Send response

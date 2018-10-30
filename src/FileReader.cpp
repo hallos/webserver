@@ -39,9 +39,9 @@ bool FileReader::bufferFile(std::string filename)
         }
         file.close();
 
-        std::unique_ptr<File> tmpPtr( new File(filename, content, "text/html") );
+        std::shared_ptr<File> tmpPtr( new File(filename, content, "text/html") );
 
-        if( this->addFileToCache(std::move(tmpPtr)) )
+        if( this->addFileToCache(tmpPtr) )
             return true;
 
         return false;
@@ -54,7 +54,7 @@ bool FileReader::bufferFile(std::string filename)
     }
 }
 
-/** \brief Returns current working directory
+/** \brief Returns root directory
  *
  * \return string
  *
@@ -73,15 +73,15 @@ std::string FileReader::getDirectory()
  * \return bool - True if file is successfully added to cache, false o/w
  *
  */
-bool FileReader::addFileToCache(std::unique_ptr<File> newFile)
+bool FileReader::addFileToCache(std::shared_ptr<File> newFile)
 {
-    if(newFile)
+    if (newFile)
     {
         cacheMutex.lock();
         fileCache.insert( 
-            std::pair<std::string, std::unique_ptr<File>>(
+            std::pair<std::string, std::shared_ptr<File>>(
                 newFile->getFilename(), 
-                std::move(newFile))
+                newFile)
         );
         cacheMutex.unlock();
         return true;
@@ -93,14 +93,13 @@ bool FileReader::addFileToCache(std::unique_ptr<File> newFile)
  *  specified by filename.
  *
  * \param filename const string& - Requested file
- * \param retFileContent string& - Content of requested file if found
- * \param retContentType string& - Content-type of requested file if found
- * \return bool - True if requested file is found, false o/w
+ * \return std::shared_ptr<File> - Pointer to a File object containing filedata if found. Empty pointer otherwise.
  *
  */
-bool FileReader::getFile(const std::string &filename, std::string &retFileContent, std::string &retContentType)
+const std::shared_ptr<File> FileReader::getFile(const std::string &filename)
 {
-    if(!filename.empty())
+    std::shared_ptr<File> file;
+    if (!filename.empty())
     {
         bool fileInCache = false;
         cacheMutex.lock();
@@ -118,11 +117,9 @@ bool FileReader::getFile(const std::string &filename, std::string &retFileConten
         if(fileInCache)
         {
             cacheMutex.lock();
-            retFileContent = fileCache[filename]->getContent();
-            retContentType = fileCache[filename]->getContentType();
+            file = fileCache[filename];
             cacheMutex.unlock();
-            return true;
         }
     }
-    return false;
+    return file;
 }

@@ -13,18 +13,18 @@ class FileReader
         FileReader(const std::string& rootDirectory);
         ~FileReader() {}
 
-        bool getFile(const std::string &filename, std::string &retFileContent, std::string &retContentType);
+        const std::shared_ptr<File> getFile(const std::string &filename);
         std::string getDirectory();
 
     private:
         std::string directory;
-        std::map<std::string, std::unique_ptr<File>> fileCache;
+        std::map<std::string, std::shared_ptr<File>> fileCache;
 
         std::mutex dirMutex;
         std::mutex cacheMutex;
 
         bool bufferFile(std::string filename);
-        bool addFileToCache(std::unique_ptr<File> newFile);
+        bool addFileToCache(std::shared_ptr<File> newFile);
 
 };
 
