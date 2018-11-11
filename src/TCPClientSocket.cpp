@@ -1,11 +1,16 @@
 #include "TCPClientSocket.h"
 
 #if WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif
+#include <winsock2.h>
+#include <stdio.h>
+#else
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
+#endif
+
 
 
 /**

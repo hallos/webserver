@@ -1,7 +1,10 @@
 #ifndef TCPCLIENTSOCKET_H
 #define TCPCLIENTSOCKET_H
 
+#ifndef WIN32
 #define INVALID_SOCKET -1
+#endif
+
 typedef int Socket;
 
 #include <string>

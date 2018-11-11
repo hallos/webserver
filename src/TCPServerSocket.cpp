@@ -1,12 +1,15 @@
 #include "TCPServerSocket.h"
 
 #if WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif
+#include <winsock2.h>
+#include <stdio.h>
+#else
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
+#endif
 
 #include "Logger.h"
 
@@ -74,7 +77,7 @@ TCPServerSocket::~TCPServerSocket()
 std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection()
 {
     sockaddr_in clientSockAdr;
-    socklen_t clientSockSize = sizeof(clientSockAdr);
+    int clientSockSize = sizeof(clientSockAdr);
 
     /*fd_set fdRead;
     FD_ZERO(&fdRead);
