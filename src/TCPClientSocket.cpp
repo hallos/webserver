@@ -1,8 +1,12 @@
 #include "TCPClientSocket.h"
 
+#if WIN32
+#include <windows.h>
+#endif
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h> //close
+
 
 /**
  * Constructor
@@ -16,7 +20,12 @@ TCPClientSocket::~TCPClientSocket()
 {
     if (socket_ != INVALID_SOCKET)
     {
+#if WIN32
+        closesocket(socket_);
+        WSACleanup();
+#else
         close(socket_);
+#endif
     }
 }
 

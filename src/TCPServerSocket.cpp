@@ -1,5 +1,8 @@
 #include "TCPServerSocket.h"
 
+#if WIN32
+#include <windows.h>
+#endif
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
@@ -12,6 +15,18 @@
  */ 
 TCPServerSocket::TCPServerSocket(int port)
 {
+#if WIN32
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,0), &wsaData) != 0)
+    {
+        throw TCPSocketException("Failed to startup winsock.");
+    }
+    if (!(LOBYTE(wsaData.wVersion) >= 2))
+    {
+        throw TCPSocketException("Too old winsock version.");
+    }
+#endif //WIN32
+
     socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_ == INVALID_SOCKET)
     {
@@ -44,7 +59,12 @@ TCPServerSocket::~TCPServerSocket()
 {
     if (socket_ != INVALID_SOCKET)
     {
+#if WIN32
+        closesocket(socket_);
+        WSACleanup();
+#else
         close(socket_);
+#endif
     }
 }
 
