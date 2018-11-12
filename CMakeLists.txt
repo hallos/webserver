@@ -12,6 +12,10 @@ add_library(WebserverLib SHARED
                          src/FileReader.cpp
                          src/Logger.cpp)
 
+if (WIN32)
+    target_link_libraries(WebserverLib ws2_32)
+endif (WIN32)
+
 include_directories(external
                     include)
 
