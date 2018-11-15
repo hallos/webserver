@@ -1,30 +1,33 @@
 #include <thread>
 #include <vector>
 
-#include "include/server.h"
-#include "include/ui.h"
+#include "Webserver.h"
+#include "ui.h"
+#include "ctpl_stl.h"
 
-using namespace std;
 
 int main()
 {
     system("title webServer"); //Set title of command-prompt
-    vector<thread*> Threads;
-    webServer server;
-    bool exit=false;
+    std::vector<std::unique_ptr<thread>> Threads;
+    auto threadPool = std::make_shared<ctpl::thread_pool>(4);
+    // TODO: Read root dir and port from config file
+    std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
+    int port = 8090;
+    auto fileReader = std::make_shared<FileReader>(rootDir);
+    auto serverSocket = std::make_shared<TCPServerSocket>(port);
+    Webserver server(threadPool, fileReader, serverSocket);
+    bool exit = false;
 
     do{
         printMainMenu(server.isRunning());
-        switch(getMenuOption(4))
+        switch(getMenuOption(3))
         {
         case 1:
-            Threads.push_back(new thread(&webServer::startServer,&server));
+            Threads.emplace_back(new thread(&Webserver::startServer,&server));
             break;
         case 2:
             server.stopServer();
-            break;
-        case 3:
-            chooseDirectory(server);
             break;
         case 0:
             server.stopServer();
@@ -35,9 +38,9 @@ int main()
         }
 
     }while(!exit);
-    for(auto i : Threads){
-        i->join();
-        delete i;
+    for (auto& t : Threads)
+    {
+        t->join();
     }
 
     return 0;
