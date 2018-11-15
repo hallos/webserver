@@ -2,10 +2,14 @@
 
 
 # webserver
-Simple windows console webserver written in C++
+Simple crossplatfom console-based webserver written in C++
 
 Compiled with 
-    MinGW64 GCC 4.7.3 on Windows
-    GCC 7.2.0 on Ubuntu
+* MinGW64 GCC 4.7.3 on Windows
+* GCC 7.2.0 on Ubuntu
 
-<>Depends on spdlog https://github.com/gabime/spdlog for logging
+## Build
+The project is built with CMake
+
+### Dependencies
+* spdlog https://github.com/gabime/spdlog
