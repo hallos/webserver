@@ -1,7 +1,7 @@
 #include <thread>
 #include <vector>
-
-#include "Webserver.h"
+#include "http.h"
+#include "Server.h"
 #include "ui.h"
 #include "ctpl_stl.h"
 
@@ -33,21 +33,21 @@ int main()
     int port = 8090;
     auto fileReader = std::make_shared<FileReader>(rootDir);
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
-    Webserver server(threadPool, fileReader, serverSocket, handleConnection);
+    Server webserver(threadPool, fileReader, serverSocket, handleConnection);
     bool exit = false;
 
     do{
-        printMainMenu(server.isRunning());
+        printMainMenu(webserver.isRunning());
         switch(getMenuOption(3))
         {
         case 1:
-            Threads.emplace_back(new thread(&Webserver::startServer,&server));
+            Threads.emplace_back(new thread(&Server::startServer,&webserver));
             break;
         case 2:
-            server.stopServer();
+            webserver.stopServer();
             break;
         case 0:
-            server.stopServer();
+            webserver.stopServer();
             exit=true;
             break;
         default:
