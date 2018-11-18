@@ -1,20 +1,19 @@
 add_subdirectory(FileReader)
-add_subdirectory(Sockets)
+add_subdirectory(Server)
 include_directories(
     FileReader
-    Sockets
+    Server
 )
 
 add_library(WebserverLib STATIC
     http.cpp
-    Webserver.cpp
     ui.cpp
     Logger.cpp
 )
 
 target_link_libraries(WebserverLib 
     FileReader
-    Sockets
+    Server
 )
 
 if (WIN32)

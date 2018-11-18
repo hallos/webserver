@@ -1,7 +1,8 @@
 #include <thread>
 #include <vector>
-
-#include "Webserver.h"
+#include "http.h"
+#include "Server.h"
+#include <FileReader.h>
 #include "ui.h"
 #include "ctpl_stl.h"
 
@@ -11,26 +12,44 @@ int main()
     system("title webServer"); //Set title of command-prompt
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
+    // Define function for handling incoming connections
+    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)
+        {
+            std::string request = clientSocket->receiveData();
+            httpInterpreter interpreter(request);
+            std::string requestedFile;
+            if (interpreter.interpretRequest(requestedFile))
+            {
+                auto fileReader = std::any_cast<std::shared_ptr<FileReader>>(sharedObject);
+                auto file = fileReader->getFile(requestedFile);
+                if (file)
+                {
+                    interpreter.constructResponse(file->getContent(), file->getContentType());
+                }
+                std::string response = interpreter.getResponse();
+                clientSocket->sendData(response);
+            }
+        };
     // TODO: Read root dir and port from config file
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
     int port = 8090;
-    auto fileReader = std::make_shared<FileReader>(rootDir);
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
-    Webserver server(threadPool, fileReader, serverSocket);
+    std::any fileReader = std::make_shared<FileReader>(rootDir);
+    Server webserver(threadPool, serverSocket, handleConnection, fileReader);
+    
     bool exit = false;
-
     do{
-        printMainMenu(server.isRunning());
+        printMainMenu(webserver.isRunning());
         switch(getMenuOption(3))
         {
         case 1:
-            Threads.emplace_back(new thread(&Webserver::startServer,&server));
+            Threads.emplace_back(new thread(&Server::startServer,&webserver));
             break;
         case 2:
-            server.stopServer();
+            webserver.stopServer();
             break;
         case 0:
-            server.stopServer();
+            webserver.stopServer();
             exit=true;
             break;
         default:
@@ -42,6 +61,5 @@ int main()
     {
         t->join();
     }
-
     return 0;
 }

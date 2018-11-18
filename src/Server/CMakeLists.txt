@@ -1,6 +1,7 @@
 
 include_directories(../)
-add_library(Sockets STATIC
+add_library(Server STATIC
+    Server.cpp
     TCPServerSocket.cpp
     TCPClientSocket.cpp
 )
