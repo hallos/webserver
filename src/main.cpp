@@ -12,11 +12,28 @@ int main()
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // TODO: Read root dir and port from config file
+    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::shared_ptr<FileReader> fileReader)
+        {
+            std::string request = clientSocket->receiveData();
+            httpInterpreter interpreter(request);
+            std::string requestedFile;
+            if (interpreter.interpretRequest(requestedFile))
+            {
+                auto file = fileReader->getFile(requestedFile);
+                if (file)
+                {
+                    interpreter.constructResponse(file->getContent(), file->getContentType());
+                }
+                std::string response = interpreter.getResponse();
+                // Send response
+                clientSocket->sendData(response);
+            }
+        };
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
     int port = 8090;
     auto fileReader = std::make_shared<FileReader>(rootDir);
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
-    Webserver server(threadPool, fileReader, serverSocket);
+    Webserver server(threadPool, fileReader, serverSocket, handleConnection);
     bool exit = false;
 
     do{

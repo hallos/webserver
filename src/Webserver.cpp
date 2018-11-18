@@ -8,10 +8,12 @@
 
 Webserver::Webserver(std::shared_ptr<ctpl::thread_pool> threadPool, 
                      std::shared_ptr<FileReader> fileReader,
-                     std::shared_ptr<TCPServerSocket> serverSocket): 
+                     std::shared_ptr<TCPServerSocket> serverSocket,
+                     std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::shared_ptr<FileReader> fileReader)> handleConnection): 
                         threadPool_(threadPool),
                         fileReader_(fileReader),
-                        serverSocket_(serverSocket)
+                        serverSocket_(serverSocket),
+                        handleConnection(handleConnection)
 {
     run = false; //Set run-flag as false by default
 }
@@ -59,31 +61,15 @@ void Webserver::runServer(int port){
             auto clientSocket = serverSocket_->acceptConnection();
             if (clientSocket)
             {    
-                threadPool_->push(
-                    [clientSocket = std::move(clientSocket), fileReader = fileReader_](int id)
-                    {
-                        std::string request = clientSocket->receiveData();
-                        httpInterpreter interpreter(request);
-                        std::string requestedFile;
-                        if (interpreter.interpretRequest(requestedFile))
-                        {
-                            auto file = fileReader->getFile(requestedFile);
-                            if (file)
-                            {
-                                interpreter.constructResponse(file->getContent(), file->getContentType());
-                            }
-                            std::string response = interpreter.getResponse();
-                            // Send response
-                            clientSocket->sendData(response);
-                        }
-                    });
+                std::shared_ptr<TCPClientSocket> sharedSocket = std::move(clientSocket);
+                threadPool_->push(handleConnection, sharedSocket, fileReader_);
             }          
         }
     }
     catch (TCPSocketException& e)
     {
         Logger::log("Webserver::runServer(): Socket failed: " + e.what());
-        Logger::log("Webserver::runServer(): Shuttind down server");
+        Logger::log("Webserver::runServer(): Shutting down server");
         stopServer();
         return;
     }
