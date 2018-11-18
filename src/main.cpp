@@ -12,7 +12,7 @@ int main()
     system("title webServer"); //Set title of command-prompt
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
-    // TODO: Read root dir and port from config file
+    // Define function for handling incoming connections
     auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)
         {
             std::string request = clientSocket->receiveData();
@@ -27,10 +27,10 @@ int main()
                     interpreter.constructResponse(file->getContent(), file->getContentType());
                 }
                 std::string response = interpreter.getResponse();
-                // Send response
                 clientSocket->sendData(response);
             }
         };
+    // TODO: Read root dir and port from config file
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
     int port = 8090;
     auto serverSocket = std::make_shared<TCPServerSocket>(port);

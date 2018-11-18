@@ -1,24 +1,14 @@
 #include "Server.h"
 #include <vector>
-
 #include "TCPClientSocket.h"
 #include "Logger.h"
 
 
 Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
                std::shared_ptr<TCPServerSocket> serverSocket,
-               std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection): 
-                    run(false),
-                    threadPool_(threadPool),
-                    serverSocket_(serverSocket),
-                    handleConnection_(handleConnection)
-{}
-
-Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-               std::shared_ptr<TCPServerSocket> serverSocket,
                std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection,
                std::any sharedObject): 
-                    run(false),
+                    run_(false),
                     threadPool_(threadPool),
                     serverSocket_(serverSocket),
                     handleConnection_(handleConnection),
@@ -27,10 +17,10 @@ Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool,
 
 bool Server::startServer()
 {
-    if(!run){
-        runMutex.lock();
-        run = true;
-        runMutex.unlock();
+    if(!run_){
+        runMutex_.lock();
+        run_ = true;
+        runMutex_.unlock();
         runServer();
         return true;
     }
@@ -42,16 +32,16 @@ bool Server::startServer()
 
 void Server::stopServer()
 {
-    runMutex.lock();
-    run = false;
-    runMutex.unlock();
+    runMutex_.lock();
+    run_ = false;
+    runMutex_.unlock();
 }
 
 bool Server::isRunning()
 {
-    runMutex.lock();
-    bool tmp = run;
-    runMutex.unlock();
+    runMutex_.lock();
+    bool tmp = run_;
+    runMutex_.unlock();
     return tmp;
 }
 
