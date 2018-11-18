@@ -7,13 +7,23 @@
 
 Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
                std::shared_ptr<TCPServerSocket> serverSocket,
-               std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket)> handleConnection): 
+               std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection): 
+                    run(false),
                     threadPool_(threadPool),
                     serverSocket_(serverSocket),
-                    handleConnection(handleConnection)
-{
-    run = false; //Set run-flag as false by default
-}
+                    handleConnection_(handleConnection)
+{}
+
+Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
+               std::shared_ptr<TCPServerSocket> serverSocket,
+               std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection,
+               std::any sharedObject): 
+                    run(false),
+                    threadPool_(threadPool),
+                    serverSocket_(serverSocket),
+                    handleConnection_(handleConnection),
+                    sharedObject_(sharedObject)                  
+{}
 
 bool Server::startServer()
 {
@@ -54,7 +64,7 @@ void Server::runServer(){
             if (clientSocket)
             {    
                 std::shared_ptr<TCPClientSocket> sharedSocket = std::move(clientSocket);
-                threadPool_->push(handleConnection, sharedSocket);
+                threadPool_->push(handleConnection_, sharedSocket, sharedObject_);
             }          
         }
     }

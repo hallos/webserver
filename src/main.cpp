@@ -13,15 +13,15 @@ int main()
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // TODO: Read root dir and port from config file
-    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket)
+    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)
         {
             std::string request = clientSocket->receiveData();
             httpInterpreter interpreter(request);
             std::string requestedFile;
             if (interpreter.interpretRequest(requestedFile))
             {
-                FileReader fileReader("/home/oscar/Documents/Projekt/hello_web");
-                auto file = fileReader.getFile(requestedFile);
+                auto fileReader = std::any_cast<std::shared_ptr<FileReader>>(sharedObject);
+                auto file = fileReader->getFile(requestedFile);
                 if (file)
                 {
                     interpreter.constructResponse(file->getContent(), file->getContentType());
@@ -34,9 +34,10 @@ int main()
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
     int port = 8090;
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
-    Server webserver(threadPool, serverSocket, handleConnection);
+    std::any fileReader = std::make_shared<FileReader>(rootDir);
+    Server webserver(threadPool, serverSocket, handleConnection, fileReader);
+    
     bool exit = false;
-
     do{
         printMainMenu(webserver.isRunning());
         switch(getMenuOption(3))
@@ -60,6 +61,5 @@ int main()
     {
         t->join();
     }
-
     return 0;
 }
