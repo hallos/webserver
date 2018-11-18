@@ -2,6 +2,7 @@
 #include <vector>
 #include "http.h"
 #include "Server.h"
+#include <FileReader.h>
 #include "ui.h"
 #include "ctpl_stl.h"
 
@@ -12,14 +13,15 @@ int main()
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // TODO: Read root dir and port from config file
-    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::shared_ptr<FileReader> fileReader)
+    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket)
         {
             std::string request = clientSocket->receiveData();
             httpInterpreter interpreter(request);
             std::string requestedFile;
             if (interpreter.interpretRequest(requestedFile))
             {
-                auto file = fileReader->getFile(requestedFile);
+                FileReader fileReader("/home/oscar/Documents/Projekt/hello_web");
+                auto file = fileReader.getFile(requestedFile);
                 if (file)
                 {
                     interpreter.constructResponse(file->getContent(), file->getContentType());
@@ -31,9 +33,8 @@ int main()
         };
     std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
     int port = 8090;
-    auto fileReader = std::make_shared<FileReader>(rootDir);
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
-    Server webserver(threadPool, fileReader, serverSocket, handleConnection);
+    Server webserver(threadPool, serverSocket, handleConnection);
     bool exit = false;
 
     do{

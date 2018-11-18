@@ -6,20 +6,13 @@
 
 
 Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-                     std::shared_ptr<FileReader> fileReader,
-                     std::shared_ptr<TCPServerSocket> serverSocket,
-                     std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::shared_ptr<FileReader> fileReader)> handleConnection): 
-                        threadPool_(threadPool),
-                        fileReader_(fileReader),
-                        serverSocket_(serverSocket),
-                        handleConnection(handleConnection)
+               std::shared_ptr<TCPServerSocket> serverSocket,
+               std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket)> handleConnection): 
+                    threadPool_(threadPool),
+                    serverSocket_(serverSocket),
+                    handleConnection(handleConnection)
 {
     run = false; //Set run-flag as false by default
-}
-
-Server::~Server()
-{
-    //destructor
 }
 
 bool Server::startServer()
@@ -28,7 +21,7 @@ bool Server::startServer()
         runMutex.lock();
         run = true;
         runMutex.unlock();
-        runServer(8090);
+        runServer();
         return true;
     }
     else{
@@ -52,7 +45,7 @@ bool Server::isRunning()
     return tmp;
 }
 
-void Server::runServer(int port){
+void Server::runServer(){
     try
     {
         while(this->isRunning())
@@ -61,7 +54,7 @@ void Server::runServer(int port){
             if (clientSocket)
             {    
                 std::shared_ptr<TCPClientSocket> sharedSocket = std::move(clientSocket);
-                threadPool_->push(handleConnection, sharedSocket, fileReader_);
+                threadPool_->push(handleConnection, sharedSocket);
             }          
         }
     }
