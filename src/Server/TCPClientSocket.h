@@ -22,7 +22,7 @@ class TCPClientSocket : public ITCPClientSocket
 {
 public:
     TCPClientSocket(Socket socket);
-    ~TCPClientSocket();
+    virtual ~TCPClientSocket();
 
     std::string receiveData();
     bool sendData(const std::string& buffer);

@@ -33,7 +33,7 @@ class TCPServerSocket : public ITCPServerSocket
 {
 public:
     TCPServerSocket(int port);
-    ~TCPServerSocket();
+    virtual ~TCPServerSocket();
 
     std::unique_ptr<ITCPClientSocket> acceptConnection();
 private:
