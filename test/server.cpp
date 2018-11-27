@@ -11,18 +11,18 @@
 #include <iostream>
 
 
-auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)
+auto handleConnection = [](int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
         clientSocket->sendData(response);    
     };
 
-class MockTCPClientSocket : public TCPClientSocket
-{ // sendData not virtual
+class MockTCPClientSocket : public ITCPClientSocket
+{
 public:
     MockTCPClientSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
-        TCPClientSocket(-1), receivedData_(receivedData), sentData_(sentData) {}
+        receivedData_(receivedData), sentData_(sentData) {}
     bool sendData(const std::string& buffer)
     {
         *sentData_ = buffer;
@@ -36,11 +36,11 @@ private:
     std::string receivedData_;
 };
 
-class MockTCPServerSocket : public TCPServerSocket
-{ // acceptConnection not virtual
+class MockTCPServerSocket : public ITCPServerSocket
+{ 
 public:
-    MockTCPServerSocket(): TCPServerSocket(8090) {}
-    std::unique_ptr<TCPClientSocket> acceptConnection()
+    MockTCPServerSocket() {}
+    std::unique_ptr<ITCPClientSocket> acceptConnection()
     {
         std::unique_ptr<MockTCPClientSocket> clientSocket;
         if (!incomingConnections.empty())
@@ -68,6 +68,8 @@ TEST_CASE("Server responds request")
     auto receivedData = std::make_shared<std::string>();
     std::string request = "HelloServer!";
     auto clientSocket = std::make_unique<MockTCPClientSocket>(request, receivedData);
+    REQUIRE(*receivedData == "");
+
     serverSocket->setIncomingConnection(std::move(clientSocket));
 
     server.stopServer();
