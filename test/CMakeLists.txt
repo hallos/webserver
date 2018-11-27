@@ -4,8 +4,12 @@ project(WebserverTest)
 
 include_directories(../src)
 
-add_executable(WebserverTest main.cpp
-                             http.cpp)
+add_executable(WebserverTest 
+    main.cpp
+    http.cpp
+)
 
-target_link_libraries(WebserverTest WebserverLib
-                                    pthread)
+target_link_libraries(WebserverTest 
+    WebserverLib
+    pthread
+)

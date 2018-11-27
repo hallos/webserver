@@ -15,8 +15,8 @@ class Server
 {
 public:
     Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-           std::shared_ptr<TCPServerSocket> serverSocket,
-           std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection,
+           std::shared_ptr<ITCPServerSocket> serverSocket,
+           std::function<void(int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)> handleConnection,
            std::any sharedObject);
     ~Server() {};
 
@@ -27,8 +27,8 @@ private:
     bool run_;
     std::mutex runMutex_;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
-    std::shared_ptr<TCPServerSocket> serverSocket_;
-    std::function<void(int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)> handleConnection_;
+    std::shared_ptr<ITCPServerSocket> serverSocket_;
+    std::function<void(int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)> handleConnection_;
     std::any sharedObject_;
 
     void runServer();

@@ -5,11 +5,20 @@
 #define INVALID_SOCKET -1
 #endif
 
-typedef int Socket;
-
 #include <string>
 
-class TCPClientSocket
+typedef int Socket;
+
+class ITCPClientSocket
+{
+public:
+    virtual ~ITCPClientSocket() {};
+
+    virtual std::string receiveData() = 0;
+    virtual bool sendData(const std::string& buffer) = 0; 
+};
+
+class TCPClientSocket : public ITCPClientSocket
 {
 public:
     TCPClientSocket(Socket socket);
