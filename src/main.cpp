@@ -13,7 +13,7 @@ int main()
     std::vector<std::unique_ptr<thread>> Threads;
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // Define function for handling incoming connections
-    auto handleConnection = [](int id, std::shared_ptr<TCPClientSocket> clientSocket, std::any sharedObject)
+    auto handleConnection = [](int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)
         {
             std::string request = clientSocket->receiveData();
             httpInterpreter interpreter(request);

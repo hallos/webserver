@@ -75,7 +75,7 @@ TCPServerSocket::~TCPServerSocket()
 /**
  * 
  */
-std::unique_ptr<TCPClientSocket> TCPServerSocket::acceptConnection()
+std::unique_ptr<ITCPClientSocket> TCPServerSocket::acceptConnection()
 {
     sockaddr_in clientSockAdr;
     socklen_t clientSockSize = sizeof(clientSockAdr);
