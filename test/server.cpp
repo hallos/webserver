@@ -3,6 +3,7 @@
 #include <deque>
 #include <string>
 #include <thread>
+#include <chrono>
 #include "Server.h"
 #include "TCPClientSocket.h"
 #include "TCPServerSocket.h"
@@ -71,7 +72,7 @@ TEST_CASE("Server responds request")
     REQUIRE(*receivedData == "");
 
     serverSocket->setIncomingConnection(std::move(clientSocket));
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     server.stopServer();
     serverThread.join();
 
