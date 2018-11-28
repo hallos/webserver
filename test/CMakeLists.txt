@@ -18,3 +18,8 @@ target_link_libraries(WebserverTest
     Server
     pthread
 )
+
+add_test(
+    Webserver
+    WebserverTest
+)

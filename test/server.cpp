@@ -59,7 +59,7 @@ private:
     std::deque<std::unique_ptr<MockTCPClientSocket>> incomingConnections;
 };
 
-TEST_CASE("Server responds request")
+TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto threadPool = std::make_shared<ctpl::thread_pool>(1);
@@ -72,10 +72,37 @@ TEST_CASE("Server responds request")
     REQUIRE(*receivedData == "");
 
     serverSocket->setIncomingConnection(std::move(clientSocket));
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     server.stopServer();
     serverThread.join();
 
     std::string expectedResponse = "Received: " + request;
     REQUIRE(expectedResponse == *receivedData);
+}
+
+TEST_CASE("Server responds to multiple requests")
+{
+    auto serverSocket = std::make_shared<MockTCPServerSocket>();
+    auto threadPool = std::make_shared<ctpl::thread_pool>(1);
+    Server server(threadPool, serverSocket, handleConnection, std::any());
+    std::thread serverThread(&Server::startServer,&server);
+
+    auto receivedData = std::make_shared<std::string>();
+    std::string request = " HelloServer!";
+
+    for (int i = 35; i < 45; i++)
+    {
+        request[0] = i;
+        serverSocket->setIncomingConnection(
+            std::make_unique<MockTCPClientSocket>(
+                request,
+                receivedData
+            )
+        );
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::string expectedResponse = "Received: " + request;
+        REQUIRE(expectedResponse == *receivedData);
+    }
+    server.stopServer();
+    serverThread.join();
 }
