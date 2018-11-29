@@ -46,12 +46,14 @@ TCPServerSocket::TCPServerSocket(int port)
     if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
         Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + errno);
+        closeSocket();
         throw TCPSocketException("Could not bind socket.");
     }
 
     if (listen(socket_, SOMAXCONN)!=0)
     {
         Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + errno);
+        closeSocket();
         throw TCPSocketException("Could not set socket in listening mode.");
     }   
 }
@@ -61,15 +63,7 @@ TCPServerSocket::TCPServerSocket(int port)
  */ 
 TCPServerSocket::~TCPServerSocket()
 {
-    if (socket_ != INVALID_SOCKET)
-    {
-#if WIN32
-        closesocket(socket_);
-        WSACleanup();
-#else
-        close(socket_);
-#endif
-    }
+    closeSocket();
 }
 
 /**
@@ -107,3 +101,16 @@ std::unique_ptr<ITCPClientSocket> TCPServerSocket::acceptConnection()
 
     return std::make_unique<TCPClientSocket>(clientSocket);    
 } 
+
+void TCPServerSocket::closeSocket()
+{
+    if (socket_ != INVALID_SOCKET)
+    {
+#if WIN32
+        closesocket(socket_);
+        WSACleanup();
+#else
+        close(socket_);
+#endif
+    }
+}

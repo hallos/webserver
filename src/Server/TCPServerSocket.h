@@ -14,7 +14,7 @@ typedef int Socket;
 class TCPSocketException : public std::exception
 {
 public:
-    TCPSocketException(const std::string& what): what_(what) {};
+    TCPSocketException(const std::string what): what_(what) {};
     virtual ~TCPSocketException() {};
     const std::string what() { return what_; }
 private:
@@ -39,6 +39,8 @@ public:
 private:
     int port_;
     Socket socket_;
+
+    void closeSocket();
 };
 
 #endif 
