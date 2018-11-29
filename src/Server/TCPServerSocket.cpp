@@ -38,6 +38,9 @@ TCPServerSocket::TCPServerSocket(int port)
         throw TCPSocketException("Could not create socket.");
     } 
 
+    linger so_linger = {1, 0};
+    setsockopt(socket_, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger));
+
     sockaddr_in sockAdr = {0};
     sockAdr.sin_family = AF_INET;
     sockAdr.sin_port = htons(port);  
@@ -45,14 +48,14 @@ TCPServerSocket::TCPServerSocket(int port)
 
     if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
-        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + errno);
+        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + std::to_string(errno));
         closeSocket();
         throw TCPSocketException("Could not bind socket.");
     }
 
     if (listen(socket_, SOMAXCONN)!=0)
     {
-        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + errno);
+        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
         closeSocket();
         throw TCPSocketException("Could not set socket in listening mode.");
     }   
