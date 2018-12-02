@@ -9,6 +9,7 @@ add_library(WebserverLib STATIC
     HTTP.cpp
     ui.cpp
     Logger.cpp
+    WebConnectionHandler.cpp
 )
 
 target_link_libraries(WebserverLib 

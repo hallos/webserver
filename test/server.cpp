@@ -12,12 +12,18 @@
 #include <iostream>
 
 
-auto handleConnection = [](int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)
+class MockConnectionHandler : public ConnectionHandler
+{
+public:
+    MockConnectionHandler() {};
+    ~MockConnectionHandler() {};
+    void onAccept(int id, std::shared_ptr<ITCPClientSocket> clientSocket)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
-        clientSocket->sendData(response);    
-    };
+        clientSocket->sendData(response);     
+    }
+};
 
 class MockTCPClientSocket : public ITCPStreamSocket
 {
@@ -63,7 +69,8 @@ TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto threadPool = std::make_shared<ctpl::thread_pool>(1);
-    Server server(threadPool, serverSocket, handleConnection, std::any());
+    auto connHandler = std::make_shared<MockConnectionHandler>();
+    Server server(threadPool, serverSocket, connHandler);
     std::thread serverThread(&Server::startServer,&server);
     // Send request
     auto receivedData = std::make_shared<std::string>();
@@ -84,7 +91,8 @@ TEST_CASE("Server responds to multiple requests")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto threadPool = std::make_shared<ctpl::thread_pool>(1);
-    Server server(threadPool, serverSocket, handleConnection, std::any());
+    auto connHandler = std::make_shared<MockConnectionHandler>();
+    Server server(threadPool, serverSocket, connHandler);
     std::thread serverThread(&Server::startServer,&server);
 
     auto receivedData = std::make_shared<std::string>();
