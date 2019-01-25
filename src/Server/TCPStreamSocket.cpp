@@ -11,6 +11,8 @@
 #include <unistd.h> //close
 #endif
 
+#define MAX_SEGMENT_SIZE 2000
+
 
 
 /**
@@ -39,7 +41,7 @@ TCPStreamSocket::~TCPStreamSocket()
  */
 std::string TCPStreamSocket::receiveData()
 {
-    char recBuffer[1000];
+    char recBuffer[MAX_SEGMENT_SIZE];
     int numBytes = recv(socket_, recBuffer, sizeof(recBuffer), 0);
     if (numBytes == -1 || numBytes == 0)
     {
