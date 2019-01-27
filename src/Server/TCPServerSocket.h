@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <exception>
-#include "TCPClientSocket.h"
+#include "TCPStreamSocket.h"
 
 typedef int Socket;
 
@@ -26,7 +26,7 @@ class ITCPServerSocket
 public:
     virtual ~ITCPServerSocket() {};
 
-    virtual std::unique_ptr<ITCPClientSocket> acceptConnection() = 0;
+    virtual std::unique_ptr<ITCPStreamSocket> acceptConnection() = 0;
 };
 
 class TCPServerSocket : public ITCPServerSocket
@@ -35,7 +35,7 @@ public:
     TCPServerSocket(int port);
     virtual ~TCPServerSocket();
 
-    std::unique_ptr<ITCPClientSocket> acceptConnection();
+    std::unique_ptr<ITCPStreamSocket> acceptConnection();
 private:
     int port_;
     Socket socket_;

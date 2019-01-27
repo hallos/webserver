@@ -1,12 +1,12 @@
 #include "Server.h"
 #include <vector>
-#include "TCPClientSocket.h"
+#include "TCPStreamSocket.h"
 #include "Logger.h"
 
 
 Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
                std::shared_ptr<ITCPServerSocket> serverSocket,
-               std::function<void(int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)> handleConnection,
+               std::function<void(int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)> handleConnection,
                std::any sharedObject): 
                     run_(false),
                     threadPool_(threadPool),
@@ -53,7 +53,7 @@ void Server::runServer(){
             auto clientSocket = serverSocket_->acceptConnection();
             if (clientSocket)
             {    
-                std::shared_ptr<ITCPClientSocket> sharedSocket = std::move(clientSocket);
+                std::shared_ptr<ITCPStreamSocket> sharedSocket = std::move(clientSocket);
                 threadPool_->push(handleConnection_, sharedSocket, sharedObject_);
             }          
         }

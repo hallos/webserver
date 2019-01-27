@@ -1,5 +1,5 @@
-#ifndef TCPCLIENTSOCKET_H
-#define TCPCLIENTSOCKET_H
+#ifndef TCPSTREAMSOCKET_H
+#define TCPSTREAMSOCKET_H
 
 #ifndef WIN32
 #define INVALID_SOCKET -1
@@ -9,20 +9,20 @@
 
 typedef int Socket;
 
-class ITCPClientSocket
+class ITCPStreamSocket
 {
 public:
-    virtual ~ITCPClientSocket() {};
+    virtual ~ITCPStreamSocket() {};
 
     virtual std::string receiveData() = 0;
     virtual bool sendData(const std::string& buffer) = 0; 
 };
 
-class TCPClientSocket : public ITCPClientSocket
+class TCPStreamSocket : public ITCPStreamSocket
 {
 public:
-    TCPClientSocket(Socket socket);
-    virtual ~TCPClientSocket();
+    TCPStreamSocket(Socket socket);
+    virtual ~TCPStreamSocket();
 
     std::string receiveData();
     bool sendData(const std::string& buffer);

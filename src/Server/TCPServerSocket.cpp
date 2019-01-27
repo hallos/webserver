@@ -72,7 +72,7 @@ TCPServerSocket::~TCPServerSocket()
 /**
  * 
  */
-std::unique_ptr<ITCPClientSocket> TCPServerSocket::acceptConnection()
+std::unique_ptr<ITCPStreamSocket> TCPServerSocket::acceptConnection()
 {
     sockaddr_in clientSockAdr;
     socklen_t clientSockSize = sizeof(clientSockAdr);
@@ -88,21 +88,21 @@ std::unique_ptr<ITCPClientSocket> TCPServerSocket::acceptConnection()
     int retVal = select(1,&fdRead,NULL,NULL,&timeOutTime);
     if (retVal <= 0)
     {
-        return std::unique_ptr<TCPClientSocket>();
+        return std::unique_ptr<TCPStreamSocket>();
     }
 
     if (!FD_ISSET(socket_,&fdRead))
     {
-        return std::unique_ptr<TCPClientSocket>();
+        return std::unique_ptr<TCPStreamSocket>();
     }*/
 
     Socket clientSocket = accept(socket_, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
     if (clientSocket == INVALID_SOCKET)
     {
-        return std::unique_ptr<TCPClientSocket>();
+        return std::unique_ptr<TCPStreamSocket>();
     }
 
-    return std::make_unique<TCPClientSocket>(clientSocket);    
+    return std::make_unique<TCPStreamSocket>(clientSocket);    
 } 
 
 void TCPServerSocket::closeSocket()

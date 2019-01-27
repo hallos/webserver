@@ -5,21 +5,21 @@
 #include <thread>
 #include <chrono>
 #include "Server.h"
-#include "TCPClientSocket.h"
+#include "TCPStreamSocket.h"
 #include "TCPServerSocket.h"
 
 #include "ctpl_stl.h"
 #include <iostream>
 
 
-auto handleConnection = [](int id, std::shared_ptr<ITCPClientSocket> clientSocket, std::any sharedObject)
+auto handleConnection = [](int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
         clientSocket->sendData(response);    
     };
 
-class MockTCPClientSocket : public ITCPClientSocket
+class MockTCPClientSocket : public ITCPStreamSocket
 {
 public:
     MockTCPClientSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
@@ -41,7 +41,7 @@ class MockTCPServerSocket : public ITCPServerSocket
 { 
 public:
     MockTCPServerSocket() {}
-    std::unique_ptr<ITCPClientSocket> acceptConnection()
+    std::unique_ptr<ITCPStreamSocket> acceptConnection()
     {
         std::unique_ptr<MockTCPClientSocket> clientSocket;
         if (!incomingConnections.empty())

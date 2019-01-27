@@ -1,4 +1,4 @@
-#include "TCPClientSocket.h"
+#include "TCPStreamSocket.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -16,12 +16,12 @@
 /**
  * Constructor
  */ 
-TCPClientSocket::TCPClientSocket(Socket socket): socket_(socket) {}
+TCPStreamSocket::TCPStreamSocket(Socket socket): socket_(socket) {}
 
 /**
  * Destructor
  */ 
-TCPClientSocket::~TCPClientSocket()
+TCPStreamSocket::~TCPStreamSocket()
 {
     if (socket_ != INVALID_SOCKET)
     {
@@ -37,7 +37,7 @@ TCPClientSocket::~TCPClientSocket()
 /**
  * 
  */
-std::string TCPClientSocket::receiveData()
+std::string TCPStreamSocket::receiveData()
 {
     char recBuffer[1000];
     int numBytes = recv(socket_, recBuffer, sizeof(recBuffer), 0);
@@ -51,7 +51,7 @@ std::string TCPClientSocket::receiveData()
 /**
  * 
  */ 
-bool TCPClientSocket::sendData(const std::string& buffer)
+bool TCPStreamSocket::sendData(const std::string& buffer)
 {
     if (send(socket_, buffer.data(), buffer.size(), 0) == -1)
     {   
