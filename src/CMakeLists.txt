@@ -6,7 +6,7 @@ include_directories(
 )
 
 add_library(WebserverLib STATIC
-    http.cpp
+    HTTP.cpp
     ui.cpp
     Logger.cpp
 )
