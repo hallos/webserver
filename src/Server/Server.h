@@ -15,7 +15,7 @@ class ConnectionHandler
 public:
     ConnectionHandler() {};
     virtual ~ConnectionHandler() {};
-    virtual void onAccept(int id,std::shared_ptr<ITCPClientSocket> clientSocket) = 0;
+    virtual void onAccept(int id,std::shared_ptr<ITCPStreamSocket> clientSocket) = 0;
 };
 
 class Server 

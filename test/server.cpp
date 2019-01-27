@@ -17,7 +17,7 @@ class MockConnectionHandler : public ConnectionHandler
 public:
     MockConnectionHandler() {};
     ~MockConnectionHandler() {};
-    void onAccept(int id, std::shared_ptr<ITCPClientSocket> clientSocket)
+    void onAccept(int id, std::shared_ptr<ITCPStreamSocket> clientSocket)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
@@ -25,10 +25,10 @@ public:
     }
 };
 
-class MockTCPClientSocket : public ITCPStreamSocket
+class MockTCPStreamSocket : public ITCPStreamSocket
 {
 public:
-    MockTCPClientSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
+    MockTCPStreamSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
         receivedData_(receivedData), sentData_(sentData) {}
     bool sendData(const std::string& buffer)
     {
@@ -49,7 +49,7 @@ public:
     MockTCPServerSocket() {}
     std::unique_ptr<ITCPStreamSocket> acceptConnection()
     {
-        std::unique_ptr<MockTCPClientSocket> clientSocket;
+        std::unique_ptr<MockTCPStreamSocket> clientSocket;
         if (!incomingConnections.empty())
         {
             clientSocket = std::move(incomingConnections.front());
@@ -57,12 +57,12 @@ public:
         }
         return clientSocket;
     }
-    void setIncomingConnection(std::unique_ptr<MockTCPClientSocket> conn)
+    void setIncomingConnection(std::unique_ptr<MockTCPStreamSocket> conn)
     {
         incomingConnections.push_back(std::move(conn));
     }
 private:
-    std::deque<std::unique_ptr<MockTCPClientSocket>> incomingConnections;
+    std::deque<std::unique_ptr<MockTCPStreamSocket>> incomingConnections;
 };
 
 TEST_CASE("Server responds to request")
@@ -75,7 +75,7 @@ TEST_CASE("Server responds to request")
     // Send request
     auto receivedData = std::make_shared<std::string>();
     std::string request = "HelloServer!";
-    auto clientSocket = std::make_unique<MockTCPClientSocket>(request, receivedData);
+    auto clientSocket = std::make_unique<MockTCPStreamSocket>(request, receivedData);
     REQUIRE(*receivedData == "");
 
     serverSocket->setIncomingConnection(std::move(clientSocket));
@@ -102,7 +102,7 @@ TEST_CASE("Server responds to multiple requests")
     {
         request[0] = i;
         serverSocket->setIncomingConnection(
-            std::make_unique<MockTCPClientSocket>(
+            std::make_unique<MockTCPStreamSocket>(
                 request,
                 receivedData
             )

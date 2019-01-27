@@ -1,7 +1,7 @@
 #include "WebConnectionHandler.h"
 #include "http.h"
 
-void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPClientSocket> clientSocket)
+void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> clientSocket)
 {
     std::string request = clientSocket->receiveData();
     auto headerLength = request.find("\r\n\r\n");
