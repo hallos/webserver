@@ -29,21 +29,24 @@ void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> so
         }
         socket->sendData(response);
     }
-    // Check Expect header for 100-continue on POST request
-    // Fetch content-length and then reqBody if request is a POST.
-    int contentLength = 0;
-    int receivedContent = reqBody.length();
-    while (contentLength > receivedContent)
+    else if (HTTP::HTTPType::POST)
     {
-        int bytesMissing = contentLength - receivedContent;
-        std::string data = socket->receiveData();
-        if (data.length() > bytesMissing)
+        // Check Expect header for 100-continue on POST request
+        // Fetch content-length and then reqBody if request is a POST.
+        int contentLength = 0;
+        int receivedContent = reqBody.length();
+        while (contentLength > receivedContent)
         {
-            reqBody.append(data, 0, bytesMissing);
-        }
-        else
-        {
-            reqBody.append(data);
+            int bytesMissing = contentLength - receivedContent;
+            std::string data = socket->receiveData();
+            if (data.length() > bytesMissing)
+            {
+                reqBody.append(data, 0, bytesMissing);
+            }
+            else
+            {
+                reqBody.append(data);
+            }
         }
     }
 }

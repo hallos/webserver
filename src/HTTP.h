@@ -10,6 +10,7 @@ namespace HTTP
         UNAVAILABLE,
         OK,
         GET,
+        POST,
         HEAD
     };
 
