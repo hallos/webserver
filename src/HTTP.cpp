@@ -18,6 +18,10 @@ HTTP::HTTPType HTTP::httpType(std::string msg)
     {
         return HTTPType::GET;
     }
+    else if (firstLine.find("POST",0) != std::string::npos)
+    {
+        return HTTPType::POST;
+    }
     
     return HTTPType::UNAVAILABLE;
 }
@@ -43,6 +47,20 @@ std::string HTTP::constructOKResponse(const std::string& fileContent, const std:
     return ss.str();
 }
 
+int HTTP::getContentLength(std::string reqHeader)
+{
+    std::string searchPattern = "Content-Length: ";
+    auto lengthPos = reqHeader.find(searchPattern);
+    if (lengthPos == std::string::npos)
+        return 0;
+    auto lengthEnd = reqHeader.find("\r\n", lengthPos);
+    if (lengthEnd == std::string::npos)
+        return 0;
+
+    std::string length = reqHeader.substr(lengthPos + searchPattern.length(), lengthEnd);
+    return std::stoi(length);
+}
+
 std::string HTTP::constructBadRequestResponse()
 {
     std::ostringstream ss;
@@ -57,6 +75,11 @@ std::string HTTP::constructNotFoundResponse(const std::string& fileName)
     ss << "HTTP/1.0 404 Not Found\r\n";
     
     return ss.str();
+}
+
+std::string HTTP::constructContinueResponse()
+{
+    return "HTTP/1.0 100 Continue\r\n\r\n";
 }
 
 std::string HTTP::interpretGETRequest(std::string getRequest)

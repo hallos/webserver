@@ -1,5 +1,6 @@
 #include "WebConnectionHandler.h"
 #include "HTTP.h"
+#include <iostream>
 
 void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> socket)
 {
@@ -11,10 +12,11 @@ void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> so
     }
     std::string reqHeader = request.substr(0, headerLength);
     std::string reqBody = request.substr(headerLength+4, request.length());
+    std::cout << reqHeader << '\n' << reqBody << std::endl;
     // Interpret header
     HTTP::HTTPType requestType = HTTP::httpType(reqHeader);
     // Construct response if HEAD or GET request
-    if (HTTP::HTTPType::GET)
+    if (requestType == HTTP::HTTPType::GET)
     {
         std::string requestedFile = HTTP::interpretGETRequest(reqHeader);
         auto file = fileReader_->getFile(requestedFile);
@@ -29,11 +31,17 @@ void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> so
         }
         socket->sendData(response);
     }
-    else if (HTTP::HTTPType::POST)
+    else if (requestType == HTTP::HTTPType::POST)
     {
         // Check Expect header for 100-continue on POST request
+        if (reqHeader.find("Expect: 100-continue") != std::string::npos)
+        {
+            std::string continueResponse = HTTP::constructContinueResponse();
+            socket->sendData(continueResponse);
+        }
         // Fetch content-length and then reqBody if request is a POST.
-        int contentLength = 0;
+        int contentLength = HTTP::getContentLength(reqHeader);
+        std::cout << "Received cont-length: " << contentLength;
         int receivedContent = reqBody.length();
         while (contentLength > receivedContent)
         {
