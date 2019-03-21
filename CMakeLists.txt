@@ -8,6 +8,3 @@ include_directories(external src)
 
 add_subdirectory(src)                       
 add_subdirectory(test)
-
-install(TARGETS Webserver
-        RUNTIME DESTINATION /usr/local/bin)
