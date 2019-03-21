@@ -27,4 +27,7 @@ add_executable(Webserver
 target_link_libraries(Webserver 
     pthread 
     WebserverLib
-)                    
+)
+
+install(TARGETS Webserver
+        RUNTIME DESTINATION /usr/local/bin)
