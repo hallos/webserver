@@ -30,4 +30,5 @@ target_link_libraries(Webserver
 )
 
 install(TARGETS Webserver
-        RUNTIME DESTINATION /usr/local/bin)
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
