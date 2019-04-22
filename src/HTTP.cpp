@@ -1,5 +1,4 @@
 #include "HTTP.h"
-#include <iostream>
 #include <string> //toString()
 #include <sstream> //ostringstream
 #include <iomanip>
@@ -64,22 +63,31 @@ int HTTP::getContentLength(std::string reqHeader)
 std::string HTTP::constructBadRequestResponse()
 {
     std::ostringstream ss;
-    ss << "HTTP/1.0 400 Bad Request\r\n";
-    
+    ss << "HTTP/1.0 400 Bad Request\r\n"
+       << "Date: " << HTTP::getTimeStamp() << "\r\n"
+       << "Server: webServer/1.0\r\n";
+
     return ss.str();
 }
 
 std::string HTTP::constructNotFoundResponse(const std::string& fileName)
 {
     std::ostringstream ss;
-    ss << "HTTP/1.0 404 Not Found\r\n";
-    
+    ss << "HTTP/1.0 404 Not Found\r\n"
+       << "Date: " << HTTP::getTimeStamp() << "\r\n"
+       << "Server: webServer/1.0\r\n";
+
     return ss.str();
 }
 
 std::string HTTP::constructContinueResponse()
 {
-    return "HTTP/1.0 100 Continue\r\n\r\n";
+    std::ostringstream ss;
+    ss << "HTTP/1.0 100 Continue\r\n"
+       << "Date: " << HTTP::getTimeStamp() << "\r\n"
+       << "Server: webServer/1.0\r\n";
+
+    return ss.str();
 }
 
 std::string HTTP::interpretGETRequest(std::string getRequest)
