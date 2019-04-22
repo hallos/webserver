@@ -6,18 +6,24 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <any>
 #include "TCPServerSocket.h"
 #include "ctpl_stl.h"
 
+
+class ConnectionHandler
+{
+public:
+    ConnectionHandler() {};
+    virtual ~ConnectionHandler() {};
+    virtual void onAccept(int id,std::shared_ptr<ITCPStreamSocket> clientSocket) = 0;
+};
 
 class Server 
 {
 public:
     Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
            std::shared_ptr<ITCPServerSocket> serverSocket,
-           std::function<void(int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)> handleConnection,
-           std::any sharedObject);
+           std::shared_ptr<ConnectionHandler> connectionHandler);
     ~Server() {};
 
     bool isRunning();
@@ -28,8 +34,7 @@ private:
     std::mutex runMutex_;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
     std::shared_ptr<ITCPServerSocket> serverSocket_;
-    std::function<void(int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)> handleConnection_;
-    std::any sharedObject_;
+    std::shared_ptr<ConnectionHandler> connectionHandler_;
 
     void runServer();
 };

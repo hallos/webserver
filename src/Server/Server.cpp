@@ -6,13 +6,11 @@
 
 Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
                std::shared_ptr<ITCPServerSocket> serverSocket,
-               std::function<void(int id, std::shared_ptr<ITCPStreamSocket> clientSocket, std::any sharedObject)> handleConnection,
-               std::any sharedObject): 
+               std::shared_ptr<ConnectionHandler> connectionHandler): 
                     run_(false),
                     threadPool_(threadPool),
                     serverSocket_(serverSocket),
-                    handleConnection_(handleConnection),
-                    sharedObject_(sharedObject)                  
+                    connectionHandler_(connectionHandler)                
 {}
 
 bool Server::startServer()
@@ -48,13 +46,19 @@ bool Server::isRunning()
 void Server::runServer(){
     try
     {
+        auto handler = std::bind(
+                &ConnectionHandler::onAccept, 
+                connectionHandler_.get(), 
+                std::placeholders::_1,
+                std::placeholders::_2);
+
         while(this->isRunning())
         {
             auto clientSocket = serverSocket_->acceptConnection();
             if (clientSocket)
             {    
                 std::shared_ptr<ITCPStreamSocket> sharedSocket = std::move(clientSocket);
-                threadPool_->push(handleConnection_, sharedSocket, sharedObject_);
+                threadPool_->push(handler, sharedSocket);
             }          
         }
     }
