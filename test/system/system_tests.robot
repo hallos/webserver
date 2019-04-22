@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup         Start Webserver
-Suite Teardown      Stop Webserver
+Test Setup          Setup Webserver
+Test Teardown       Stop Webserver
 Library             Process
 Library             HttpLibrary.HTTP
 
@@ -9,7 +9,7 @@ ${SERVER_PORT}      8090
 ${WEBSERVER_BIN}    build/src/Webserver
 
 *** Keywords ***
-Start Webserver
+Setup Webserver
     Start Process   ${WEBSERVER_BIN}
     Create Http Context     host=localhost:${SERVER_PORT}
 Stop Webserver
@@ -17,6 +17,16 @@ Stop Webserver
 
 
 *** Test Cases ***
-HTTP Get request returns expected html-page
+HTTP GET request returns expected html-page
     GET     /index.html
     Response Body Should Contain    Hello Web!
+
+HTTP GET request of non-existing file returns 404 Not Found
+    GET     /IdontExistAtAll.html
+    ${status}=      Get Response Status
+    Should Start With   404     ${status}
+
+HTTP HEAD request of existing page returns 200 OK
+    HEAD     /index.html
+    ${status}=      Get Response Status
+    Should Start With   200     ${status}
