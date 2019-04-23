@@ -11,8 +11,12 @@ install:
   - sudo apt-get install -qq cmake
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+  - sudo apt-get install -y python-pip
+  - sudo pip install robotframework robotframework-httplibrary
 
 script:
   - mkdir build && cd build && cmake .. 
   - make -j8 
   - make test
+  - cd ..
+  - robot test/system/system_tests.robot

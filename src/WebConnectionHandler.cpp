@@ -15,7 +15,7 @@ void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> so
     std::cout << reqHeader << '\n' << reqBody << std::endl;
     // Interpret header
     HTTP::HTTPType requestType = HTTP::httpType(reqHeader);
-    // Construct response if HEAD or GET request
+
     if (requestType == HTTP::HTTPType::GET)
     {
         std::string requestedFile = HTTP::interpretGETRequest(reqHeader);
@@ -24,6 +24,21 @@ void WebConnectionHandler::onAccept(int id, std::shared_ptr<ITCPStreamSocket> so
         if (file)
         {
             response = HTTP::constructOKResponse(file->getContent(), file->getContentType());
+        }
+        else
+        {
+            response = HTTP::constructNotFoundResponse(requestedFile);
+        }
+        socket->sendData(response);
+    }
+    else if (requestType == HTTP::HTTPType::HEAD)
+    {
+        std::string requestedFile = HTTP::interpretHEADRequest(reqHeader);
+        auto file = fileReader_->getFile(requestedFile);
+        std::string response;
+        if (file)
+        {
+            response = HTTP::constructHEADResponse(file->getContent(), file->getContentType());
         }
         else
         {

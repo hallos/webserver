@@ -101,20 +101,11 @@ const std::shared_ptr<File> FileReader::getFile(const std::string &filename)
     std::shared_ptr<File> file;
     if (!filename.empty())
     {
-        bool fileInCache = false;
         cacheMutex.lock();
         auto it = fileCache.find(filename);
         cacheMutex.unlock();
 
-        if( it != fileCache.end() )
-        {
-            fileInCache = true;
-        }
-        else if(bufferFile(filename))
-        {
-            fileInCache = true;
-        }
-        if(fileInCache)
+        if( it != fileCache.end() || bufferFile(filename) )
         {
             cacheMutex.lock();
             file = fileCache[filename];

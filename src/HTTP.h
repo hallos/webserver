@@ -21,6 +21,7 @@ namespace HTTP
     std::string constructBadRequestResponse();
     std::string constructNotFoundResponse(const std::string& fileName);
     std::string constructContinueResponse();
+    std::string constructHEADResponse(const std::string& fileContent, const std::string& contentType);
     std::string constructOKResponse(const std::string& fileContent, const std::string& contentType);
     std::string interpretGETRequest(std::string getRequest);
     std::string interpretHEADRequest(std::string headRequest);

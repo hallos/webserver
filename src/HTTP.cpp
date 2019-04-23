@@ -17,6 +17,10 @@ HTTP::HTTPType HTTP::httpType(std::string msg)
     {
         return HTTPType::GET;
     }
+    else if (firstLine.find("HEAD",0) != std::string::npos)
+    {
+        return HTTPType::HEAD;
+    }
     else if (firstLine.find("POST",0) != std::string::npos)
     {
         return HTTPType::POST;
@@ -30,6 +34,19 @@ bool HTTP::isValidHTTP(std::string msg)
     std::string firstLine = msg.substr(0,msg.find_first_of('\n'));
 
     return (firstLine.find("HTTP",0) != std::string::npos);
+}
+
+std::string HTTP::constructHEADResponse(const std::string& fileContent, const std::string& contentType)
+{
+    std::ostringstream ss;
+    ss << "HTTP/1.0 200 OK\r\n"
+       << "Date: " << HTTP::getTimeStamp() << "\r\n"
+       << "Server: webServer/1.0\r\n"
+       << "Content-type: " << contentType << "\r\n"
+       << "Content-length: " << fileContent.length() << "\r\n"
+       << "\r\n";
+
+    return ss.str();
 }
 
 std::string HTTP::constructOKResponse(const std::string& fileContent, const std::string& contentType)
@@ -65,7 +82,9 @@ std::string HTTP::constructBadRequestResponse()
     std::ostringstream ss;
     ss << "HTTP/1.0 400 Bad Request\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
@@ -75,7 +94,9 @@ std::string HTTP::constructNotFoundResponse(const std::string& fileName)
     std::ostringstream ss;
     ss << "HTTP/1.0 404 Not Found\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
@@ -85,7 +106,9 @@ std::string HTTP::constructContinueResponse()
     std::ostringstream ss;
     ss << "HTTP/1.0 100 Continue\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
@@ -95,6 +118,21 @@ std::string HTTP::interpretGETRequest(std::string getRequest)
     std::string firstLine = getRequest.substr(0, getRequest.find_first_of('\n'));
     //Get positions for filename in request
     std::string::size_type fileNameBegin = firstLine.find("GET",0) + 4;
+    std::string::size_type fileNameEnd = firstLine.find(" ", fileNameBegin ) - fileNameBegin;
+    //Extract filename
+    std::string filename = firstLine.substr(fileNameBegin, fileNameEnd);
+    //Erase /-caracter in front of filename
+    if (filename[0] == '/') filename.erase(0,1);
+    if (filename.empty()) filename = "index.html";
+
+    return filename;
+}
+
+std::string HTTP::interpretHEADRequest(std::string getRequest)
+{
+    std::string firstLine = getRequest.substr(0, getRequest.find_first_of('\n'));
+    //Get positions for filename in request
+    std::string::size_type fileNameBegin = firstLine.find("HEAD",0) + 4;
     std::string::size_type fileNameEnd = firstLine.find(" ", fileNameBegin ) - fileNameBegin;
     //Extract filename
     std::string filename = firstLine.substr(fileNameBegin, fileNameEnd);
