@@ -12,7 +12,7 @@ install:
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
   - sudo apt-get install -y python-pip
-  - pip install robotframework
+  - sudo pip install robotframework
 
 script:
   - mkdir build && cd build && cmake .. 
