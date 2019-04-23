@@ -10,7 +10,7 @@ int main()
 {
     auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     // TODO: Read root dir and port from config file
-    std::string rootDir = "/home/oscar/Documents/Projekt/hello_web";
+    std::string rootDir = "test/system";
     int port = 8090;
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
     auto fileReader = std::make_shared<FileReader>(rootDir);
