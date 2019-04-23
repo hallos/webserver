@@ -22,11 +22,11 @@ HTTP GET request returns expected html-page
     Response Body Should Contain    Hello Web!
 
 HTTP GET request of non-existing file returns 404 Not Found
-    GET     /IdontExistAtAll.html
+    Run Keyword And Ignore Error    GET     /IdontExistAtAll.html
     ${status}=      Get Response Status
-    Should Start With   404     ${status}
+    Should Start With   ${status}   404
 
 HTTP HEAD request of existing page returns 200 OK
     HEAD     /index.html
     ${status}=      Get Response Status
-    Should Start With   200     ${status}
+    Should Start With   ${status}   200

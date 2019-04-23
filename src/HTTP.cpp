@@ -65,7 +65,9 @@ std::string HTTP::constructBadRequestResponse()
     std::ostringstream ss;
     ss << "HTTP/1.0 400 Bad Request\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
@@ -75,7 +77,9 @@ std::string HTTP::constructNotFoundResponse(const std::string& fileName)
     std::ostringstream ss;
     ss << "HTTP/1.0 404 Not Found\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
@@ -85,7 +89,9 @@ std::string HTTP::constructContinueResponse()
     std::ostringstream ss;
     ss << "HTTP/1.0 100 Continue\r\n"
        << "Date: " << HTTP::getTimeStamp() << "\r\n"
-       << "Server: webServer/1.0\r\n";
+       << "Server: webServer/1.0\r\n"
+       << "Content-length: 0\r\n"
+       << "\r\n";
 
     return ss.str();
 }
