@@ -5,7 +5,7 @@ Library             Process
 Library             HttpLibrary.HTTP
 
 *** Variables ***
-${SERVER_PORT}      8090
+${SERVER_PORT}      8080
 ${WEBSERVER_BIN}    build/src/Webserver
 
 *** Keywords ***
