@@ -21,9 +21,9 @@ public:
 class Server 
 {
 public:
-    Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-           std::shared_ptr<ITCPServerSocket> serverSocket,
-           std::shared_ptr<ConnectionHandler> connectionHandler);
+    Server(std::shared_ptr<ITCPServerSocket> serverSocket,
+           std::shared_ptr<ConnectionHandler> connectionHandler,
+           int numThreads);
     ~Server() {};
 
     bool isRunning();

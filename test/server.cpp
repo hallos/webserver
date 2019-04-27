@@ -68,9 +68,8 @@ private:
 TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
-    auto threadPool = std::make_shared<ctpl::thread_pool>(1);
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(threadPool, serverSocket, connHandler);
+    Server server(serverSocket, connHandler, 1);
     std::thread serverThread(&Server::startServer,&server);
     // Send request
     auto receivedData = std::make_shared<std::string>();
@@ -90,9 +89,8 @@ TEST_CASE("Server responds to request")
 TEST_CASE("Server responds to multiple requests")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
-    auto threadPool = std::make_shared<ctpl::thread_pool>(1);
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(threadPool, serverSocket, connHandler);
+    Server server(serverSocket, connHandler, 1);
     std::thread serverThread(&Server::startServer,&server);
 
     auto receivedData = std::make_shared<std::string>();

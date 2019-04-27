@@ -4,14 +4,15 @@
 #include "Logger.h"
 
 
-Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-               std::shared_ptr<ITCPServerSocket> serverSocket,
-               std::shared_ptr<ConnectionHandler> connectionHandler): 
+Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
+               std::shared_ptr<ConnectionHandler> connectionHandler,
+               int numThreads) :
                     run_(false),
-                    threadPool_(threadPool),
                     serverSocket_(serverSocket),
-                    connectionHandler_(connectionHandler)                
-{}
+                    connectionHandler_(connectionHandler)
+{
+    threadPool_ = std::make_shared<ctpl::thread_pool>(numThreads);
+}
 
 bool Server::startServer()
 {
