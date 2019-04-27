@@ -11,7 +11,8 @@ Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
                     serverSocket_(serverSocket),
                     connectionHandler_(connectionHandler)
 {
-    threadPool_ = std::make_shared<ctpl::thread_pool>(numThreads);
+    // Start up numThreads + 1 extra to be used as server thread
+    threadPool_ = std::make_shared<ctpl::thread_pool>(numThreads + 1);
 }
 
 bool Server::startServer()
@@ -20,7 +21,7 @@ bool Server::startServer()
     {
         runMutex_.lock();
         run_ = true;
-        serverThread_ = std::make_shared<std::thread>(&Server::runServer, this);
+        threadPool_->push(std::bind(&Server::runServer, this));
         runMutex_.unlock();
         return true;
     }
@@ -35,7 +36,6 @@ void Server::stopServer()
 {
     runMutex_.lock();
     run_ = false;
-    serverThread_->join();
     runMutex_.unlock();
 }
 
