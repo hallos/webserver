@@ -16,14 +16,16 @@ Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
 
 bool Server::startServer()
 {
-    if(!run_){
+    if (!run_)
+    {
         runMutex_.lock();
         run_ = true;
+        serverThread_ = std::make_shared<std::thread>(&Server::runServer, this);
         runMutex_.unlock();
-        runServer();
         return true;
     }
-    else{
+    else
+    {
         Logger::log("Server::startServer(): Server is already running.");
         return false;
     }
@@ -33,15 +35,13 @@ void Server::stopServer()
 {
     runMutex_.lock();
     run_ = false;
+    serverThread_->join();
     runMutex_.unlock();
 }
 
 bool Server::isRunning()
 {
-    runMutex_.lock();
-    bool tmp = run_;
-    runMutex_.unlock();
-    return tmp;
+    return run_;
 }
 
 void Server::runServer(){

@@ -8,6 +8,7 @@
 #include <functional>
 #include "TCPServerSocket.h"
 #include "ctpl_stl.h"
+#include <thread>
 
 
 class ConnectionHandler
@@ -32,6 +33,7 @@ public:
 private:
     bool run_;
     std::mutex runMutex_;
+    std::shared_ptr<std::thread> serverThread_;
     std::shared_ptr<ctpl::thread_pool> threadPool_;
     std::shared_ptr<ITCPServerSocket> serverSocket_;
     std::shared_ptr<ConnectionHandler> connectionHandler_;

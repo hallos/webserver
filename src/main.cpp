@@ -28,8 +28,12 @@ int main(int argc, char** argv)
     auto fileReader = std::make_shared<FileReader>(rootDirectory);
     auto connectionHandler = std::make_shared<WebConnectionHandler>(fileReader);
     Server webserver(serverSocket, connectionHandler, 4);
-    
     webserver.startServer();
+
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
 
     return 0;
 }
