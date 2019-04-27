@@ -4,7 +4,6 @@
 #include "WebConnectionHandler.h"
 #include <vector>
 #include <iostream>
-#include <ctpl_stl.h>
 #include <clara.hpp>
 
 
@@ -25,13 +24,16 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    auto threadPool = std::make_shared<ctpl::thread_pool>(4);
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
     auto fileReader = std::make_shared<FileReader>(rootDirectory);
     auto connectionHandler = std::make_shared<WebConnectionHandler>(fileReader);
-    Server webserver(threadPool, serverSocket, connectionHandler);
-    
+    Server webserver(serverSocket, connectionHandler, 4);
     webserver.startServer();
+
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
 
     return 0;
 }

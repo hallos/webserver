@@ -5,3 +5,7 @@ add_library(Server STATIC
     TCPServerSocket.cpp
     TCPStreamSocket.cpp
 )
+
+target_link_libraries(Server
+    pthread
+)

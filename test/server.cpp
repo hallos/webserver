@@ -68,10 +68,9 @@ private:
 TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
-    auto threadPool = std::make_shared<ctpl::thread_pool>(1);
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(threadPool, serverSocket, connHandler);
-    std::thread serverThread(&Server::startServer,&server);
+    Server server(serverSocket, connHandler, 1);
+    server.startServer();
     // Send request
     auto receivedData = std::make_shared<std::string>();
     std::string request = "HelloServer!";
@@ -81,7 +80,6 @@ TEST_CASE("Server responds to request")
     serverSocket->setIncomingConnection(std::move(clientSocket));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     server.stopServer();
-    serverThread.join();
 
     std::string expectedResponse = "Received: " + request;
     REQUIRE(expectedResponse == *receivedData);
@@ -90,10 +88,9 @@ TEST_CASE("Server responds to request")
 TEST_CASE("Server responds to multiple requests")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
-    auto threadPool = std::make_shared<ctpl::thread_pool>(1);
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(threadPool, serverSocket, connHandler);
-    std::thread serverThread(&Server::startServer,&server);
+    Server server(serverSocket, connHandler, 1);
+    server.startServer();
 
     auto receivedData = std::make_shared<std::string>();
     std::string request = " HelloServer!";
@@ -112,5 +109,4 @@ TEST_CASE("Server responds to multiple requests")
         REQUIRE(expectedResponse == *receivedData);
     }
     server.stopServer();
-    serverThread.join();
 }

@@ -4,25 +4,29 @@
 #include "Logger.h"
 
 
-Server::Server(std::shared_ptr<ctpl::thread_pool> threadPool, 
-               std::shared_ptr<ITCPServerSocket> serverSocket,
-               std::shared_ptr<ConnectionHandler> connectionHandler): 
+Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
+               std::shared_ptr<ConnectionHandler> connectionHandler,
+               int numThreads) :
                     run_(false),
-                    threadPool_(threadPool),
                     serverSocket_(serverSocket),
-                    connectionHandler_(connectionHandler)                
-{}
+                    connectionHandler_(connectionHandler)
+{
+    // Start up numThreads + 1 extra to be used as server thread
+    threadPool_ = std::make_shared<ctpl::thread_pool>(numThreads + 1);
+}
 
 bool Server::startServer()
 {
-    if(!run_){
+    if (!run_)
+    {
         runMutex_.lock();
         run_ = true;
+        threadPool_->push(std::bind(&Server::runServer, this));
         runMutex_.unlock();
-        runServer();
         return true;
     }
-    else{
+    else
+    {
         Logger::log("Server::startServer(): Server is already running.");
         return false;
     }
@@ -37,10 +41,7 @@ void Server::stopServer()
 
 bool Server::isRunning()
 {
-    runMutex_.lock();
-    bool tmp = run_;
-    runMutex_.unlock();
-    return tmp;
+    return run_;
 }
 
 void Server::runServer(){
