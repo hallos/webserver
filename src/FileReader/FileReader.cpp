@@ -51,19 +51,6 @@ bool FileReader::bufferFile(std::string filename)
     }
 }
 
-/** \brief Returns root directory
- *
- * \return string
- *
- */
-std::string FileReader::getDirectory()
-{
-    dirMutex.lock();
-    std::string tmp = directory;
-    dirMutex.unlock();
-    return tmp;
-}
-
 /** \brief Adds a file to the fileCache.
  *
  * \param newFile shared_ptr<File> - Pointer to File to be added
