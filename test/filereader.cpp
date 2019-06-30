@@ -13,7 +13,7 @@ TEST_CASE("getDirectory() returns root directory that has been set")
 
 TEST_CASE("getFile() returns a File-object corresponding to requested file")
 {
-	std::string rootDir = "test/tmp/";
+	std::string rootDir = "tmp/";
     FileReader fileReader(rootDir);
 
     // Create a test file
