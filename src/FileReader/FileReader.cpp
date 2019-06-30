@@ -41,10 +41,7 @@ bool FileReader::bufferFile(std::string filename)
 
         std::shared_ptr<File> tmpPtr( new File(filename, content, "text/html") );
 
-        if( this->addFileToCache(tmpPtr) )
-            return true;
-
-        return false;
+        return this->addFileToCache(tmpPtr);
     }
     catch(const std::ios_base::failure& e)
     {
