@@ -14,13 +14,11 @@ class FileReader
         ~FileReader() {}
 
         const std::shared_ptr<File> getFile(const std::string &filename);
-        std::string getDirectory();
+        const std::string& getDirectory() { return directory; };
 
     private:
         std::string directory;
         std::map<std::string, std::shared_ptr<File>> fileCache;
-
-        std::mutex dirMutex;
         std::mutex cacheMutex;
 
         bool bufferFile(std::string filename);

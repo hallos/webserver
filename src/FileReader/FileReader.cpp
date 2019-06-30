@@ -1,5 +1,6 @@
 #include "FileReader.h"
 #include <fstream>
+#include <sstream>
 #include "Logger.h"
 
 /**
@@ -22,59 +23,42 @@ FileReader::FileReader(const std::string& rootDirectory): directory(rootDirector
  */
 bool FileReader::bufferFile(std::string filename)
 {
+    bool fileBuffered = false;
     std::fstream file;
     file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
 
     try
     {
-        std::string content;
         //Open file and read the file to string
         file.open(this->getDirectory() + filename, std::ios_base::in|std::ios_base::binary);
-        file.seekg(0, file.beg);
-        char tmpChar = 0;
-        while( file.peek() != EOF )
-        {
-            file.read(&tmpChar, sizeof(tmpChar));
-            content.push_back(tmpChar);
-        }
-        file.close();
+        std::stringstream contentStream;
+        contentStream << file.rdbuf();
 
-        std::shared_ptr<File> tmpPtr( new File(filename, content, "text/html") );
-
-        if( this->addFileToCache(tmpPtr) )
-            return true;
-
-        return false;
+        fileBuffered = this->addFileToCache(
+            std::make_shared<File>(filename, contentStream.str(), "text/html")
+        );
     }
     catch(const std::ios_base::failure& e)
     {
         Logger::log("FileReader::bufferFile(): file " + directory + filename + "not found.");
-        if(file.is_open()) file.close(); //Close file if there is a file opened
-        return false;
     }
-}
 
-/** \brief Returns root directory
- *
- * \return string
- *
- */
-std::string FileReader::getDirectory()
-{
-    dirMutex.lock();
-    std::string tmp = directory;
-    dirMutex.unlock();
-    return tmp;
+    //Close file
+    if (file.is_open())
+        file.close();
+
+    return fileBuffered;
 }
 
 /** \brief Adds a file to the fileCache.
  *
- * \param newFile unique_ptr<File> - Pointer to File to be added
+ * \param newFile shared_ptr<File> - Pointer to File to be added
  * \return bool - True if file is successfully added to cache, false o/w
  *
  */
 bool FileReader::addFileToCache(std::shared_ptr<File> newFile)
 {
+    bool success = false;
     if (newFile)
     {
         cacheMutex.lock();
@@ -84,9 +68,9 @@ bool FileReader::addFileToCache(std::shared_ptr<File> newFile)
                 newFile)
         );
         cacheMutex.unlock();
-        return true;
+        success = true;
     }
-    return false;
+    return success;
 }
 
 /** \brief Returns a requested file in working directory or a sub directory

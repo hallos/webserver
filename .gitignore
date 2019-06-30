@@ -1,7 +1,11 @@
 bin/*
 obj/*
+build/*
 doxygen/*
 UML/*
+
+# Visual Code files
+.vscode/*
 
 # CodeBlocks files
 *.depend
