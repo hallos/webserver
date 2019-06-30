@@ -1,5 +1,6 @@
 #include "FileReader.h"
 #include <fstream>
+#include <sstream>
 #include "Logger.h"
 
 /**
@@ -22,33 +23,31 @@ FileReader::FileReader(const std::string& rootDirectory): directory(rootDirector
  */
 bool FileReader::bufferFile(std::string filename)
 {
+    bool fileBuffered = false;
     std::fstream file;
     file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
 
     try
     {
-        std::string content;
         //Open file and read the file to string
         file.open(this->getDirectory() + filename, std::ios_base::in|std::ios_base::binary);
-        file.seekg(0, file.beg);
-        char tmpChar = 0;
-        while( file.peek() != EOF )
-        {
-            file.read(&tmpChar, sizeof(tmpChar));
-            content.push_back(tmpChar);
-        }
-        file.close();
+        std::stringstream contentStream;
+        contentStream << file.rdbuf();
 
-        std::shared_ptr<File> tmpPtr( new File(filename, content, "text/html") );
-
-        return this->addFileToCache(tmpPtr);
+        fileBuffered = this->addFileToCache(
+            std::make_shared<File>(filename, contentStream.str(), "text/html")
+        );
     }
     catch(const std::ios_base::failure& e)
     {
         Logger::log("FileReader::bufferFile(): file " + directory + filename + "not found.");
-        if(file.is_open()) file.close(); //Close file if there is a file opened
-        return false;
     }
+
+    //Close file
+    if (file.is_open())
+        file.close();
+
+    return fileBuffered;
 }
 
 /** \brief Adds a file to the fileCache.
