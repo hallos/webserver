@@ -66,12 +66,13 @@ std::string FileReader::getDirectory()
 
 /** \brief Adds a file to the fileCache.
  *
- * \param newFile unique_ptr<File> - Pointer to File to be added
+ * \param newFile shared_ptr<File> - Pointer to File to be added
  * \return bool - True if file is successfully added to cache, false o/w
  *
  */
 bool FileReader::addFileToCache(std::shared_ptr<File> newFile)
 {
+    bool success = false;
     if (newFile)
     {
         cacheMutex.lock();
@@ -81,9 +82,9 @@ bool FileReader::addFileToCache(std::shared_ptr<File> newFile)
                 newFile)
         );
         cacheMutex.unlock();
-        return true;
+        success = true;
     }
-    return false;
+    return success;
 }
 
 /** \brief Returns a requested file in working directory or a sub directory
