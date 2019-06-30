@@ -4,12 +4,14 @@ project(WebserverTest)
 
 include_directories(
     ../src
+    ../src/FileReader
     ../src/Server
 )
 
 add_executable(WebserverTest 
     main.cpp
     http.cpp
+    filereader.cpp
     server.cpp
 )
 
