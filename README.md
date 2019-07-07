@@ -22,3 +22,5 @@ example usage:
 ```
 $: Webserver -p 8080 -d /home/bertil/www/
 ```
+  
+Use the --help argument to get additional info about the CLI.
