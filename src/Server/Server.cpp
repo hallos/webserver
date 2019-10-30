@@ -14,6 +14,12 @@ Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
     threadPool_ = std::make_shared<hallos::thread_pool>(numThreads);
 }
 
+Server::~Server()
+{
+    run_ = false;
+    serverThread_->join();
+}
+
 bool Server::startServer()
 {
     if (!run_)
@@ -45,11 +51,11 @@ bool Server::isRunning()
 void Server::runServer(){
     try
     {
-        auto handler = std::bind(
-                &ConnectionHandler::onAccept, 
-                connectionHandler_.get(), 
-                std::placeholders::_1,
-                std::placeholders::_2);
+
+        std::function<void(std::shared_ptr<ITCPStreamSocket>)> handler = [connHandler = connectionHandler_](std::shared_ptr<ITCPStreamSocket> clientSocket)
+        {
+            connHandler->onAccept(clientSocket);
+        };
 
         while(this->isRunning())
         {
@@ -57,7 +63,7 @@ void Server::runServer(){
             if (clientSocket)
             {    
                 std::shared_ptr<ITCPStreamSocket> sharedSocket = std::move(clientSocket);
-                threadPool_->push(handler, sharedSocket);
+                threadPool_->add_work(handler, sharedSocket);
             }          
         }
     }

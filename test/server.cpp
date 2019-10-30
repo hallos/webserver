@@ -8,7 +8,6 @@
 #include "TCPStreamSocket.h"
 #include "TCPServerSocket.h"
 
-#include "ctpl_stl.h"
 #include <iostream>
 
 
@@ -17,7 +16,7 @@ class MockConnectionHandler : public ConnectionHandler
 public:
     MockConnectionHandler() {};
     ~MockConnectionHandler() {};
-    void onAccept(int id, std::shared_ptr<ITCPStreamSocket> clientSocket)
+    void onAccept(std::shared_ptr<ITCPStreamSocket> clientSocket)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;

@@ -15,7 +15,7 @@ class ConnectionHandler
 public:
     ConnectionHandler() {};
     virtual ~ConnectionHandler() {};
-    virtual void onAccept(int id,std::shared_ptr<ITCPStreamSocket> clientSocket) = 0;
+    virtual void onAccept(std::shared_ptr<ITCPStreamSocket> clientSocket) = 0;
 };
 
 class Server 
@@ -24,7 +24,7 @@ public:
     Server(std::shared_ptr<ITCPServerSocket> serverSocket,
            std::shared_ptr<ConnectionHandler> connectionHandler,
            int numThreads);
-    ~Server() {};
+    ~Server();
 
     bool isRunning();
     bool startServer();
