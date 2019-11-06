@@ -10,7 +10,7 @@ public:
     WebConnectionHandler(std::shared_ptr<FileReader> fileReader): fileReader_(fileReader) {};
     ~WebConnectionHandler() {};
 
-    void onAccept(int id, std::shared_ptr<ITCPStreamSocket> socket);
+    void onAccept(std::shared_ptr<ITCPStreamSocket> socket);
 private:
     std::shared_ptr<FileReader> fileReader_;
 };
