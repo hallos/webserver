@@ -7,4 +7,5 @@ add_library(FileReader STATIC
 
 target_link_libraries(FileReader
     WebserverLib
+    stdc++fs
 )

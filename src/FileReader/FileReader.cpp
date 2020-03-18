@@ -3,15 +3,17 @@
 #include <sstream>
 #include "Logger.h"
 
+namespace fs = std::experimental::filesystem;
+
 /**
  * 
  */ 
 FileReader::FileReader(const std::string& rootDirectory): directory(rootDirectory)
 {
-    if (directory.back() != '/' && directory.back() != '\\')
+    /*if (directory.back() != '/' && directory.back() != '\\')
     {
         directory.push_back('/');
-    }
+    }*/
 }
 
 /** \brief Buffers a file in server-directory to a new file object
@@ -40,7 +42,7 @@ bool FileReader::bufferFile(std::string filename)
     }
     catch(const std::ios_base::failure& e)
     {
-        Logger::log("FileReader::bufferFile(): file " + directory + filename + "not found.");
+        Logger::log("FileReader::bufferFile(): file " + directory.string() + filename + "not found.");
     }
 
     //Close file
