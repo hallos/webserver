@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
     int port = 8080;
     int nrThreads = 4;
-    std::string rootDirectory = "test/system";
+    std::string rootDirectory = "test/system/";
     bool showHelp = false;
     auto cli = clara::Help(showHelp)
              | clara::Opt(port, "port")

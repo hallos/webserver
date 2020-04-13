@@ -12,10 +12,10 @@ class FileReader
 {
     public:
         FileReader(const std::string& rootDirectory);
-        ~FileReader() {}
+        ~FileReader() = default;
 
         const std::shared_ptr<File> getFile(const std::string &filename);
-        const std::string getDirectory() { return directory.string(); };
+        const std::string getDirectory();
 
     private:
         std::experimental::filesystem::path directory;

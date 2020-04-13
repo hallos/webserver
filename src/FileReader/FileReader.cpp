@@ -10,10 +10,6 @@ namespace fs = std::experimental::filesystem;
  */ 
 FileReader::FileReader(const std::string& rootDirectory): directory(rootDirectory)
 {
-    /*if (directory.back() != '/' && directory.back() != '\\')
-    {
-        directory.push_back('/');
-    }*/
 }
 
 /** \brief Buffers a file in server-directory to a new file object
@@ -100,3 +96,13 @@ const std::shared_ptr<File> FileReader::getFile(const std::string &filename)
     }
     return file;
 }
+
+/** \brief Returns path to current root directory as a string
+ *
+ * \return const string& - Root-directory path
+ *
+ */
+const std::string FileReader::getDirectory()
+{
+    return directory.string();
+};
