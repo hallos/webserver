@@ -6,7 +6,7 @@
 #include <map>
 #include <memory>
 #include "File.h"
-#include <experimental/filesystem>
+#include <filesystem>
 
 class FileReader
 {
@@ -18,7 +18,7 @@ class FileReader
         const std::string getDirectory();
 
     private:
-        std::experimental::filesystem::path directory;
+        std::filesystem::path directory;
         std::map<std::string, std::shared_ptr<File>> fileCache;
         std::mutex cacheMutex;
 

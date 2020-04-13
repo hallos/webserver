@@ -3,7 +3,6 @@
 #include <sstream>
 #include "Logger.h"
 
-namespace fs = std::experimental::filesystem;
 
 /**
  * 
