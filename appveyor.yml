@@ -14,5 +14,6 @@ build_script:
 - make -j 8 
 
 test_script:
-- cd build && make test
+- make test
+- cd ..
 - robot test/system/system_tests.robot
