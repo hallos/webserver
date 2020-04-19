@@ -1,4 +1,8 @@
+### Travis CI status
 [![Build Status](https://travis-ci.org/hallos/webserver.svg?branch=crosscompatible)](https://travis-ci.org/hallos/webserver)
+
+### Appveyor status
+[![Build status](https://ci.appveyor.com/api/projects/status/l7my4r7wh10f0coh?svg=true)](https://ci.appveyor.com/project/hallos/webserver)
 
 
 # webserver
