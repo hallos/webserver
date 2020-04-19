@@ -4,7 +4,7 @@ install:
 - sh: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 - sh: sudo apt-get update -qq
 - sh: sudo apt-get install -qq cmake
-- sh: sudo apt-get install -qq g++-8
+- sh: sudo apt-get install -y g++-8
 - sh: sudo apt-get install -y python-pip
 - sh: sudo pip install robotframework robotframework-httplibrary
 
