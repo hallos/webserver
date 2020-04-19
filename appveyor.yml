@@ -9,6 +9,7 @@ install:
 - sh: sudo pip install robotframework robotframework-httplibrary
 
 build_script:
+- alias g++=g++-8
 - mkdir build && cd build && cmake ..
 - make -j 8 
 
