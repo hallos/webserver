@@ -6,18 +6,19 @@
 #include <map>
 #include <memory>
 #include "File.h"
+#include <filesystem>
 
 class FileReader
 {
     public:
         FileReader(const std::string& rootDirectory);
-        ~FileReader() {}
+        ~FileReader() = default;
 
         const std::shared_ptr<File> getFile(const std::string &filename);
-        const std::string& getDirectory() { return directory; };
+        const std::string getDirectory();
 
     private:
-        std::string directory;
+        std::filesystem::path directory;
         std::map<std::string, std::shared_ptr<File>> fileCache;
         std::mutex cacheMutex;
 

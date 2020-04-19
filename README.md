@@ -6,7 +6,7 @@ Simple crossplatfom console-based webserver written in C++
 
 Compiled with 
 * ~~MinGW64 GCC 4.7.3 on Windows~~ This is not validated yet
-* GCC 7.2.0 on Ubuntu
+* GCC 8.4.0 on Ubuntu
 
 ## Build
 The project is built with CMake.  
