@@ -11,12 +11,12 @@
 #include <iostream>
 
 
-class MockConnectionHandler : public connection_handler
+class MockConnectionHandler : public hallos::connection_handler
 {
 public:
     MockConnectionHandler() {};
     ~MockConnectionHandler() {};
-    void onAccept(std::shared_ptr<Itcp_stream_socket> clientSocket)
+    void onAccept(std::shared_ptr<hallos::Itcp_stream_socket> clientSocket)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
@@ -24,7 +24,7 @@ public:
     }
 };
 
-class MockTCPStreamSocket : public Itcp_stream_socket
+class MockTCPStreamSocket : public hallos::Itcp_stream_socket
 {
 public:
     MockTCPStreamSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
@@ -42,11 +42,11 @@ private:
     std::string receivedData_;
 };
 
-class MockTCPServerSocket : public Itcp_server_socket
+class MockTCPServerSocket : public hallos::Itcp_server_socket
 { 
 public:
     MockTCPServerSocket() {}
-    std::unique_ptr<Itcp_stream_socket> acceptConnection()
+    std::unique_ptr<hallos::Itcp_stream_socket> acceptConnection()
     {
         std::unique_ptr<MockTCPStreamSocket> clientSocket;
         if (!incomingConnections.empty())
@@ -68,7 +68,7 @@ TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    tcp_server server(serverSocket, connHandler, 1);
+    hallos::tcp_server server(serverSocket, connHandler, 1);
     server.startServer();
     // Send request
     auto receivedData = std::make_shared<std::string>();
@@ -88,7 +88,7 @@ TEST_CASE("Server responds to multiple requests")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    tcp_server server(serverSocket, connHandler, 1);
+    hallos::tcp_server server(serverSocket, connHandler, 1);
     server.startServer();
 
     auto receivedData = std::make_shared<std::string>();

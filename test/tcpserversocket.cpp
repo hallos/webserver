@@ -6,7 +6,7 @@
 
 TEST_CASE( "", "[serversocket]" ) 
 {
-    tcp_server_socket serverSocket(8080); 
+    hallos::tcp_server_socket serverSocket(8080); 
     std::string data = "Hello Socket!";
     auto clientSocket = serverSocket.acceptConnection();
 

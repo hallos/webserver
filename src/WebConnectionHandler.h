@@ -4,13 +4,13 @@
 #include <tcp_server.h>
 #include "FileReader/FileReader.h"
 
-class WebConnectionHandler : public connection_handler
+class WebConnectionHandler : public hallos::connection_handler
 {
 public:
     WebConnectionHandler(std::shared_ptr<FileReader> fileReader): fileReader_(fileReader) {};
     ~WebConnectionHandler() {};
 
-    void onAccept(std::shared_ptr<Itcp_stream_socket> socket);
+    void onAccept(std::shared_ptr<hallos::Itcp_stream_socket> socket);
 private:
     std::shared_ptr<FileReader> fileReader_;
 };

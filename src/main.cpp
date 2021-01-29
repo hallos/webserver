@@ -40,10 +40,10 @@ int main(int argc, char** argv)
         nrThreads = 1;
     }
 
-    auto serverSocket = std::make_shared<tcp_server_socket>(port);
+    auto serverSocket = std::make_shared<hallos::tcp_server_socket>(port);
     auto fileReader = std::make_shared<FileReader>(rootDirectory);
     auto connectionHandler = std::make_shared<WebConnectionHandler>(fileReader);
-    tcp_server webserver(serverSocket, connectionHandler, nrThreads);
+    hallos::tcp_server webserver(serverSocket, connectionHandler, nrThreads);
     webserver.startServer();
 
     while (true)
