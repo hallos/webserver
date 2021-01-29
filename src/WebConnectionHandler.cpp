@@ -2,7 +2,7 @@
 #include "HTTP.h"
 #include <iostream>
 
-void WebConnectionHandler::onAccept(std::shared_ptr<ITCPStreamSocket> socket)
+void WebConnectionHandler::onAccept(std::shared_ptr<Itcp_stream_socket> socket)
 {
     std::string request = socket->receiveData();
     auto headerLength = request.find("\r\n\r\n");

@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_MAIN 
 #include "catch.hpp"
 
-#include "TCPServerSocket.h"
+#include "tcp_server_socket.h"
 #include <iostream>
 
 TEST_CASE( "", "[serversocket]" ) 
 {
-    TCPServerSocket serverSocket(8080); 
+    tcp_server_socket serverSocket(8080); 
     std::string data = "Hello Socket!";
     auto clientSocket = serverSocket.acceptConnection();
 

@@ -5,8 +5,8 @@
 #include <thread>
 #include <chrono>
 #include <tcp_server.h>
-#include "TCPStreamSocket.h"
-#include "TCPServerSocket.h"
+#include "tcp_stream_socket.h"
+#include "tcp_server_socket.h"
 
 #include <iostream>
 
@@ -16,7 +16,7 @@ class MockConnectionHandler : public connection_handler
 public:
     MockConnectionHandler() {};
     ~MockConnectionHandler() {};
-    void onAccept(std::shared_ptr<ITCPStreamSocket> clientSocket)
+    void onAccept(std::shared_ptr<Itcp_stream_socket> clientSocket)
     {
         std::string request = clientSocket->receiveData();
         std::string response = "Received: " + request;
@@ -24,7 +24,7 @@ public:
     }
 };
 
-class MockTCPStreamSocket : public ITCPStreamSocket
+class MockTCPStreamSocket : public Itcp_stream_socket
 {
 public:
     MockTCPStreamSocket(std::string receivedData, std::shared_ptr<std::string> sentData):
@@ -42,11 +42,11 @@ private:
     std::string receivedData_;
 };
 
-class MockTCPServerSocket : public ITCPServerSocket
+class MockTCPServerSocket : public Itcp_server_socket
 { 
 public:
     MockTCPServerSocket() {}
-    std::unique_ptr<ITCPStreamSocket> acceptConnection()
+    std::unique_ptr<Itcp_stream_socket> acceptConnection()
     {
         std::unique_ptr<MockTCPStreamSocket> clientSocket;
         if (!incomingConnections.empty())
