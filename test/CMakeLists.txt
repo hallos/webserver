@@ -12,7 +12,6 @@ add_executable(WebserverTest
     main.cpp
     http.cpp
     filereader.cpp
-    server.cpp
 )
 
 target_link_libraries(WebserverTest 
