@@ -1,16 +1,16 @@
 #ifndef WEBCONNECTIONHANDLER_H_INCLUDED
 #define WEBCONNECTIONHANDLER_H_INCLUDED
 
-#include "Server/Server.h"
+#include <tcp_server.h>
 #include "FileReader/FileReader.h"
 
-class WebConnectionHandler : public ConnectionHandler
+class WebConnectionHandler : public hallos::connection_handler
 {
 public:
     WebConnectionHandler(std::shared_ptr<FileReader> fileReader): fileReader_(fileReader) {};
     ~WebConnectionHandler() {};
 
-    void onAccept(std::shared_ptr<ITCPStreamSocket> socket);
+    void onAccept(std::shared_ptr<hallos::Itcp_stream_socket> socket);
 private:
     std::shared_ptr<FileReader> fileReader_;
 };

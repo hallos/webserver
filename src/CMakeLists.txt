@@ -1,8 +1,7 @@
 add_subdirectory(FileReader)
-add_subdirectory(Server)
+
 include_directories(
     FileReader
-    Server
 )
 
 add_library(WebserverLib STATIC
@@ -13,7 +12,7 @@ add_library(WebserverLib STATIC
 
 target_link_libraries(WebserverLib 
     FileReader
-    Server
+    hallos_network
 )
 
 if (WIN32)

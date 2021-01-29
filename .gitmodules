@@ -1,0 +1,3 @@
+[submodule "external/hallib"]
+	path = external/hallib
+	url = https://github.com/hallos/hallib
