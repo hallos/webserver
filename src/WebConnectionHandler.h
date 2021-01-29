@@ -1,10 +1,10 @@
 #ifndef WEBCONNECTIONHANDLER_H_INCLUDED
 #define WEBCONNECTIONHANDLER_H_INCLUDED
 
-#include "Server/Server.h"
+#include <tcp_server.h>
 #include "FileReader/FileReader.h"
 
-class WebConnectionHandler : public ConnectionHandler
+class WebConnectionHandler : public connection_handler
 {
 public:
     WebConnectionHandler(std::shared_ptr<FileReader> fileReader): fileReader_(fileReader) {};

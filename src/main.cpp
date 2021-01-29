@@ -1,5 +1,5 @@
 #include "HTTP.h"
-#include "Server.h"
+#include <tcp_server.h>
 #include <FileReader.h>
 #include "WebConnectionHandler.h"
 #include <vector>
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     auto serverSocket = std::make_shared<TCPServerSocket>(port);
     auto fileReader = std::make_shared<FileReader>(rootDirectory);
     auto connectionHandler = std::make_shared<WebConnectionHandler>(fileReader);
-    Server webserver(serverSocket, connectionHandler, nrThreads);
+    tcp_server webserver(serverSocket, connectionHandler, nrThreads);
     webserver.startServer();
 
     while (true)

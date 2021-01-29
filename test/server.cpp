@@ -4,14 +4,14 @@
 #include <string>
 #include <thread>
 #include <chrono>
-#include "Server.h"
+#include <tcp_server.h>
 #include "TCPStreamSocket.h"
 #include "TCPServerSocket.h"
 
 #include <iostream>
 
 
-class MockConnectionHandler : public ConnectionHandler
+class MockConnectionHandler : public connection_handler
 {
 public:
     MockConnectionHandler() {};
@@ -68,7 +68,7 @@ TEST_CASE("Server responds to request")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(serverSocket, connHandler, 1);
+    tcp_server server(serverSocket, connHandler, 1);
     server.startServer();
     // Send request
     auto receivedData = std::make_shared<std::string>();
@@ -88,7 +88,7 @@ TEST_CASE("Server responds to multiple requests")
 {
     auto serverSocket = std::make_shared<MockTCPServerSocket>();
     auto connHandler = std::make_shared<MockConnectionHandler>();
-    Server server(serverSocket, connHandler, 1);
+    tcp_server server(serverSocket, connHandler, 1);
     server.startServer();
 
     auto receivedData = std::make_shared<std::string>();

@@ -10,7 +10,13 @@ project(Webserver)
 
 enable_testing()
 
-include_directories(external src)
+include_directories(
+    external
+    external/hallib/include
+    external/hallib/src/network
+    src
+)
 
+add_subdirectory(external/hallib)
 add_subdirectory(src)
 add_subdirectory(test)
