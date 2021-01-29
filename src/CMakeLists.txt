@@ -12,7 +12,7 @@ add_library(WebserverLib STATIC
 
 target_link_libraries(WebserverLib 
     FileReader
-    hallos_server
+    hallos_network
 )
 
 if (WIN32)

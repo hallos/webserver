@@ -17,7 +17,7 @@ add_executable(WebserverTest
 
 target_link_libraries(WebserverTest 
     WebserverLib
-    hallos_server
+    hallos_network
     pthread
 )
 
